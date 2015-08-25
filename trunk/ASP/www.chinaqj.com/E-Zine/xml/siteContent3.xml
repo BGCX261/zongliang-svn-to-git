@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<flipBook>
+  <siteOptions>
+    <pageSetup pageW="300" pageH="400" hardCover="false" pageClr="eeeeee" flipSound="true" reverseOrder="false" bgClr="ffffff" hStartClr="333333" hStartAlp="100" hEndClr="111111" hEndAlp="100" overLayClr="000000" overLayTrans="60" bgImage="true" bgUrl="images/wallpaper03.jpg" bgStyle="tile" autoPlayer="false" autoDur="4" preLoadTxt="数据加载中，请稍候..."></pageSetup>
+    <buttonSetup highlClr="858c1e" darkClr="5B5B13" rimClr="ffffff" iconClr="ffffff" buttonPack="buttonpack02"></buttonSetup>
+    <logoSetup showLogo="true" logoUrl="images/logo.png" logoShade="false" logoBevel="false" logoGlow="false"></logoSetup>
+    <helpSetup showMe="true" downPdfBut="下载电子杂志" printBut="打印" contactBut="联系我们" listBut="电子杂志列表" zoomBut="放大/缩小视图" singleBut="翻页" allBut="跳转" cornerHint="单击页角可以向前、向后翻页" lineClr="858c1e" overLayClr="000000" overLayTrans="60"></helpSetup>
+    <pdfSetup showMe="true" pdfUrl="11"></pdfSetup>
+    <zoomSetup showMe="true" extendedZoom="true"><![CDATA[<dragMessage>您可以单击或拖动页<br /><br />也可以使用鼠标滚轮放大或缩小视图</dragMessage>]]></zoomSetup>
+    <printSetup showMe="true">
+      <printHead><![CDATA[<headPrint>打印选项</headPrint>]]></printHead>
+      <printOne butTxt="打 印"><![CDATA[<headPrint>打印电子杂志单页</headPrint><br /><contPrint>请输入您要打印的电子杂志单页页码，单击“打印”按钮开始打印。</contPrint>]]></printOne>
+      <printAll butTxt="打 印"><![CDATA[<headPrint>打印当前电子杂志所有页面</headPrint><br /><contPrint>需要打印所有页面，请直接单击“打印”按钮开始打印。</contPrint>]]></printAll>
+    </printSetup>
+    <contactSetup showMe="false" nameField="称呼、姓名" mailField="电子邮箱" subjField="留言、咨询标题" messageField="留言、咨询详细内容" errTxt1="必填项" errTxt2="格式错误" procTxt="数据正在提交…" sucMess="感谢您的关注，您的留言、咨询内容已提交！">
+      <contactHead><![CDATA[<headPrint>联系我们</headPrint>]]></contactHead>
+      <contactTxt butTxt="提 交"><![CDATA[<contPrint>请详细填写您的留言、咨询内容，含 * 为必填项。</contPrint>]]></contactTxt>
+    </contactSetup>
+    <listPages showMe="true"></listPages>
+    <mp3Setup useMp3="true" usePhp="false" autoStart="true" randomStart="true"></mp3Setup>
+  </siteOptions>
+  <bookPages>
+    <page src="/uploadfile/20100307143028651.jpg"></page>
+    <page src="/uploadfile/E-zine/2.jpg"></page>
+    <page src="/uploadfile/E-zine/3.jpg"></page>
+    <page src="/uploadfile/E-zine/4.jpg"></page>
+    <page src="/uploadfile/E-zine/5.jpg"></page>
+    <page src="/uploadfile/E-zine/6.jpg"></page>
+    <page src="/uploadfile/E-zine/9.jpg"></page>
+    <page src="/uploadfile/E-zine/7.jpg"></page>
+    <page src="/uploadfile/E-zine/8.jpg"></page>
+    <page src="/uploadfile/E-zine/1.jpg"></page>
+  </bookPages>
+</flipBook>

@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title>专题　Powered By SDCMS</title>
+<link href="{sdcms:root}skins/2009/css/sdcms.css" rel="stylesheet" type="text/css" />
+<script>var webdir="{sdcms:root}";</script>
+<script src="{sdcms:root}editor/jquery.js" language="javascript"></script>
+<script src="{sdcms:root}skins/2009/js/sdcms.js" language="javascript"></script>
+</head>
+
+<body>
+{sdcms:include("Sdcms_Head.htm")}
+	<div class="width mt10">
+		<div id="left">
+			
+			<div class="border">
+				<div class="subject_bg">
+					<div class="subject_title">专题列表</div>
+				</div>
+				<div class="m10">
+					{@sdcms:page field="id,title,content" table="sd_topic" pagesize="20"}
+					{@eof}<div>没有资料</div>{/@eof}
+					<div class="Topic_List">
+						<img src="{@pic}" onerror="this.src='{sdcms:root}skins/2009/images/nopic.gif'" align="left" width="80" height="60" />
+						<h1><a href="{@link}">{@title}</a></h1><span>{@Content function="nohtml" len="200"}</span>
+					</div>
+					{/@sdcms:page}
+					<div class="List_page c">{sdcms:listpage}</div>
+				</div>
+		  </div>
+		  
+	  </div>
+		<!--Left Over-->
+		<div id="right">
+			<div class="border" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">最新专题</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+						{sdcms:loop field="id,title" table="sd_topic" top="10" }
+						{eof}<dt>没有资料</dt>{/eof}
+							<dt><a href="{link}">{title len="26"}</a></dt>
+						{/sdcms:loop}
+					</dl>
+				</div>
+			
+			</div>
+			
+			<div class="border mt10" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">推荐专题</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+					{sdcms:loop field="id,title" table="sd_topic" top="10"  where="Isnice=1"}
+					{eof}<dt>没有资料</dt>{/eof}
+						<dt><a href="{link}">{title len="26"}</a></dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+	  </div>
+	</div>
+	
+{sdcms:include("sdcms_foot.htm")}

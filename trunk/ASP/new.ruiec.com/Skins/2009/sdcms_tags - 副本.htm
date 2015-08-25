@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title>标签 　Powered By SDCMS</title>
+<link href="{sdcms:root}skins/2009/css/sdcms.css" rel="stylesheet" type="text/css" />
+<script>var webdir="{sdcms:root}";</script>
+<script src="{sdcms:root}editor/jquery.js" language="javascript"></script>
+<script src="{sdcms:root}skins/2009/js/sdcms.js" language="javascript"></script>
+</head>
+
+<body>
+{sdcms:include("Sdcms_Head.htm")}
+	<div class="width mt10">
+		<div id="left">
+			
+			<div class="border">
+				<div class="subject_bg">
+					<div class="subject_title">标签</div>
+				</div>
+				<div class="m10">
+						{@sdcms:page table="sd_tags" where="followid>0" pagesize="100"}
+						{@eof}<div>没有标签</div>{/@eof}
+						<div class="tag_title"><a href="{@link}" style="font:{@tag_size} {@tag_font};color:{@tag_color}">{@title}</a>(<span>{@followid}</span>)</div>
+						{/@sdcms:page}
+					<div class="List_page c">{sdcms:listpage}</div>
+				</div>	
+		  </div>
+		  
+	  </div>
+		<!--Left Over-->
+		<div id="right">
+			<div class="border" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">随机标签</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+					{sdcms:loop table="sd_tags" top="10" order="rnd"}
+						{eof}<dt>没有资料</dt>{/eof}
+						<dt><a href="{link}">{title len="36"}</a></dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+			<div class="border mt10" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">热门标签</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+					{sdcms:loop table="sd_tags" top="10"  order="hits desc,id desc"}
+					{eof}<dt>没有资料</dt>{/eof}
+						<dt><a href="{link}{sdcms:root}tags/?/{title function="Urlencode"}/">{title len="36"}</a></dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+	  </div>
+	</div>
+	
+{sdcms:include("sdcms_foot.htm")}

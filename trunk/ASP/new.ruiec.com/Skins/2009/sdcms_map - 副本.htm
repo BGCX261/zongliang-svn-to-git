@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title>网站地图 　Powered By SDCMS</title>
+<link href="{sdcms:root}skins/2009/css/sdcms.css" rel="stylesheet" type="text/css" />
+<script>var webdir="{sdcms:root}";</script>
+<script src="{sdcms:root}editor/jquery.js" language="javascript"></script>
+<script src="{sdcms:root}skins/2009/js/sdcms.js" language="javascript"></script>
+</head>
+
+<body>
+{sdcms:include("Sdcms_Head.htm")}
+	
+	<div class="width mt10">
+	
+			<div class="border">
+				<div class="subject_bg">
+					<div class="subject_title"><a href="{sdcms:root}sitemap.htm">网站地图</a></div>
+				</div>
+				<div class="m10 index_label">
+				<a href="{sdcms:root}">网站首页</a><br>
+				 <div style="padding-left:24px;line-height:30px;">{sdcms:map}</div>
+				 {@sdcms:loop table="sd_other" where="followid=0" order="ordnum desc"}
+				 <br><a href="{@link}">{@title}</a><br>
+				 {sdcms:loop table="sd_other" where="followid={@id}" order="ordnum desc"}
+				 　├ <a href="{link}">{title}</a><br>
+				 {/sdcms:loop}
+				 {/@sdcms:loop}
+				</div>	
+		  </div>
+		
+	</div>
+	
+{sdcms:include("sdcms_foot.htm")}

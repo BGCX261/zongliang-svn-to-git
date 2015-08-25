@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title>{sdcms:info_title} 　Powered By SDCMS</title>
+<link href="{sdcms:root}skins/2009/css/sdcms.css" rel="stylesheet" type="text/css" />
+<script>var webdir="{sdcms:root}";</script>
+<script src="{sdcms:root}editor/jquery.js" language="javascript"></script>
+<script type="text/javascript" src="{sdcms:root}editor/kindeditor.js" charset="utf-8" ></script>
+<script src="{sdcms:root}skins/2009/js/sdcms.js" language="javascript"></script>
+<!--[if lt IE 7]>
+<script type="text/javascript" src="{sdcms:root}skins/2009/js/minmax.js"></script>
+<![endif]-->
+</head>
+
+<body>
+{sdcms:include("Sdcms_Head.htm")}
+	<div class="width mt10">
+		<div id="left">
+			
+			<div class="border">
+				<div class="subject_bg">
+					<div class="subject_title"><a href="{sdcms:info_url}">{sdcms:info_title}</a></div>
+				</div>
+				<div class="m10">
+					{@sdcms:page table="sd_comment" where="ispass=1 and infoid={sdcms:info_id}" pagesize="10"}
+					{@eof}<div>暂无任何评论</div>{/@eof}			
+					<div class="comment_title"><span>{@adddate date="yyyy-mm-dd hh.ff.ss"}</span>{@username} </div>
+					<div class="comment_txt">
+					{sdcms:loop table="sd_comment" where="id in({@allfollowid})"}<div>{/sdcms:loop}
+					{sdcms:loop table="sd_comment" where="id in({@allfollowid})" order="id"}<u>{i}楼　{username} 发表于：{adddate}</u><br>{content}</div>{/sdcms:loop}
+					{@content}</div>
+					<div class="comment_other"><span id="support_{@id}"><a href="javascript:void(0)" onclick="Comment_Support({@id})">支持({@SupportNum})</a></span>　<a href="javascript:void(0)" onclick="set_comment({@id},'{@content function="nohtml" len="20"}')">回复</a></div>
+					{/@sdcms:page}
+					<div class="List_page">{sdcms:listpage}</div>
+				</div>	
+		  </div>
+		  
+	  </div>
+		<!--Left Over-->
+		<div id="right">
+			<div class="border" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">发表评论</div>
+				</div>
+				<div class="m10">
+					<dl class="plug_book_add">
+					<form onsubmit="return checkcomment(this);">
+					<dt id="get_html"></dt>
+					<dt><textarea name="content" class="inputs" id="coment_content"></textarea></dt>
+					<dt>姓名：<input name="username" size="6" type="text" class="input" maxlength="10" value="匿名" onfocus="if(this.value=='匿名')this.value=''" onblur="if(this.value=='')this.value='匿名'" /><input type="hidden" name="id" value="{sdcms:info_id}" />　验证码：<input id="yzm" size="6" name="yzm" type="text"  class="input" maxlength="10" /><img align="absmiddle" src="{sdcms:root}inc/sdcmscode.asp?t0=60&t1=18" alt="看不清楚，换一个" onClick="this.src+='&'+Math.random();" id="yzm_num" /></dt>
+					<dt><input type="hidden" name="followid" id="followid" /><input class="vote_bnt" value="提 交" type="submit" /> <span id="showmsg"></span></dt>
+					</form>
+					</dl>
+				</div>
+			</div>
+			
+			<div class="border mt10" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">热评信息</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+					{sdcms:loop field="id,title,style" table="Sd_info" top="10" where="ispass=1 and IsComment=1" order="Comment_Num Desc,ID Desc"}
+						{eof}<dt>没有资料</dt>{/eof}
+						<dt><a href="?ID={ID}" title="{title}" {style}>{title len="36"}</a></dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+	  </div>
+	</div>
+	
+{sdcms:include("sdcms_foot.htm")}

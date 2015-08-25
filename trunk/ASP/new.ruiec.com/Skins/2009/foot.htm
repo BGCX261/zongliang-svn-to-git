@@ -1,0 +1,17 @@
+</div>
+<div id="footer">
+  <div class="foottop"></div>
+  <div id="copyright">
+    <div class="foot_left"><a href="{sdcms:weburl}" target="_blank" title="{sdcms:webname}"><img src="{sdcms_logo}" alt="{sdcms:webname}" /></a></div>
+	<div class="foot_right">
+		<div class="foot_nav">
+		  <a href="{sdcms:root}">网站首页</a>
+		  {sdcms:loop field="pagedir,htmlname,title,id" table="sd_other" where="followid=0" top="6"} | <a href="{link}">{title}</a>{/sdcms:loop} | <a href="{sdcms:root}plug/link/">友情链接</a> | <a href="{sdcms:root}sitemap{sdcms:filetxt}">网站地图</a>
+		</div>
+		<div class="foot_other" style="font-size:12px;">{sdcms_footer_end}</div>
+	</div>
+  </div>
+  <div class="clear" style="width:100%;height:30px;"></div>
+</div>
+</body>
+</html>

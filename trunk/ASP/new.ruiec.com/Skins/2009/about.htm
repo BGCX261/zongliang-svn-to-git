@@ -1,0 +1,26 @@
+{sdcms:include("head.htm")}
+<div id="content" class="content">
+  <div id="con_left">
+	<div id="about">
+	{sdcms_about-default}	&#160;
+	</div>
+  </div>
+  <div id="con_right">
+	<div class="con_list_news">
+		<h3>关于我们</h3>
+		<ul>
+		{sdcms:loop top="10" table="sd_info" where="ClassID={sdcms:class_id} AND IsPass=1" order="Ontop desc,Isnice desc,id desc"}
+		{eof}<li>没有资料</li>{/eof}
+			<li><a href="{link}" title="{title}">{title}</a></li>
+		{/sdcms:loop}
+		</ul>
+	</div>
+	<div class="contact">
+		<h3>7*24小时服务支持</h3>
+		{sdcms_r_info}
+	</div>
+	{sdcms_ad_rbootom}
+</div>
+<div class="clear"></div>
+<br />
+{sdcms:include("foot.htm")}	

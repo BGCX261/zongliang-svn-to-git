@@ -1,0 +1,29 @@
+{sdcms:include("head.htm")}
+<div id="content" class="content">
+	<ul id="page_case_list">
+	{@sdcms:loop table="View_info" where="classid = {sdcms:class_id} and ispass=1" order="Ontop desc,id desc"}
+	{@eof}<div>Not Found</div>{/@eof}
+		<li>
+			<div class="case_box_top"></div>
+			<img alt="{@title}" src="{@pic}" />
+			<div class="page_case_des">
+				<div class="case_name">
+					<h2>{@title}</h2>
+					<p> ±º‰£∫{@adddate date="yyyy-mm-dd"}<br>
+					∑√Œ Õ¯÷∑£∫<a title="{@title}" class="url" target="_blank" href="{@link}" rel="nofollow">{@link}</a>
+					</p>
+				</div>
+				<div class="case_desc">
+					{@jj}
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="case_box_bottom"></div>
+		</li>
+	{/@sdcms:loop}
+	</ul>
+	<div class="clear"></div>
+</div>
+<br />
+
+{sdcms:include("foot.htm")}	

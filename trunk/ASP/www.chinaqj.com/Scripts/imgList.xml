@@ -1,0 +1,7 @@
+﻿<?xml version='1.0' encoding='gb2312'?>
+<imgList>
+  <pic>
+  </pic>
+  <rollTime fade_in="10">4</rollTime>
+  <text font="黑体" size="12" bold="true" color="0xFF0000"></text>
+</imgList>

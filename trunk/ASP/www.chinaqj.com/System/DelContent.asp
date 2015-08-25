@@ -1,0 +1,589 @@
+﻿<!--#include file="../Include/Const.asp" -->
+<!--#include file="../Include/ConnSiteData.asp" -->
+<!--#include file="CheckAdmin.asp"-->
+<%
+dim Result,Selectid
+Dim ix,tempx,selectx,len_idx
+Result=request("Result")
+SelectID=request.Form("SelectID")
+ID=request("ID")
+select case Result
+  case "SiteLink"
+    select case Trim(Request.Form("batch"))
+	case "批量生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Link set State = 1 where ID in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "批量失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Link set State = 0 where ID in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Link where ID in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Bug"
+	select case Trim(Request.Form("batch"))
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Bug where ID in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Key"
+    select case Trim(Request.Form("batch"))
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Key where ID in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "KeyIdea"
+    select case Trim(Request.Form("batch"))
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_KeyIdea where ID in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Magazine"
+    select case Request("batch")
+	case "删除所选"
+	Response.Write(""&SelectID&"")
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Magazine where id in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Flash"
+    select case Trim(Request.Form("batch"))
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Flash where ID in ("&SelectID&")"
+    response.redirect "Admin_SlideEdit.asp"
+	End Select
+  case "UserSearch"
+    select case Trim(Request.Form("batch"))
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Search where ID in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Subsidiary"
+    select case Trim(Request.Form("batch"))
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Subsidiary where ID in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Properties"
+    select case Trim(Request.Form("batch"))
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Properties where ID in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "NetWork"
+    select case Trim(Request.Form("batch"))
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_NetWork where ID in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Kefu"
+    select case Trim(Request.Form("batch"))
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Kefu where ID in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Rotation"
+    select case Trim(Request.Form("batch"))
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Rotation where ID in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Administrators"
+    select case Trim(Request.Form("batch"))
+	case "批量生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Admin set Working = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "批量失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Admin set Working = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+    if SelectID<>"" then  conn.execute "delete from ChinaQJ_Admin where id in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "FormDiy"
+    select case Trim(Request.Form("batch"))
+	case "批量生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Form set ChinaQJ_FormView = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "批量失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Form set ChinaQJ_FormView = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+    if SelectID<>"" then  conn.execute "delete from ChinaQJ_Form where id in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "LoginLog"
+    if SelectID<>"" then  conn.execute "delete from ChinaQJ_AdminLog where id in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+  case "MemGroup"
+    if SelectID<>"" then  conn.execute "delete from ChinaQJ_MemGroup where GroupID in ('"&SelectID&"')"
+	conn.execute "Update ChinaQJ_About set GroupID='200603281858588888' , Exclusive='>=' where GroupID = '"&SelectID&"'"
+	conn.execute "Update ChinaQJ_Download set GroupID='200603281858588888' , Exclusive='>=' where GroupID = '"&SelectID&"'"
+	conn.execute "Update ChinaQJ_Members set GroupID='200603281858588888' , GroupName='临时游客' where GroupID = '"&SelectID&"'"
+	conn.execute "Update ChinaQJ_News set GroupID='200603281858588888' , Exclusive='>=' where GroupID = '"&SelectID&"'"
+	conn.execute "Update ChinaQJ_Others set GroupID='200603281858588888' , Exclusive='>=' where GroupID = '"&SelectID&"'"
+	conn.execute "Update ChinaQJ_Products set GroupID='200603281858588888' , Exclusive='>=' where GroupID = '"&SelectID&"'"
+    response.redirect request.servervariables("http_referer")
+  case "Members"
+    select case Trim(Request.Form("batch"))
+	case "批量生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Members set Working = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "批量失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Members set Working = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Members where id in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "About"
+    select case Request("batch")
+    case "中文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_About set ViewFlagCh = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "中文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_About set ViewFlagCh = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_About set ViewFlagEn = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_About set ViewFlagEn = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+	Response.Write(""&SelectID&"")
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_About where id in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Products"
+    select case Trim(Request.Form("batch"))
+	case "批量修改产品参数"
+	pro_id=request("pro_id")
+	ProductNo=request("ProductNo")
+	ProductNameCh=request("ProductNameCh")
+	ProductNameEn=request("ProductNameEn")
+	Sequence=request("Sequence")
+	ClickNumber=request("ClickNumber")
+	arr_id=Split(Replace(pro_id," ",""),",")
+	arr_ProductNo=Split(Replace(ProductNo," ",""),",")
+	arr_ProductNameCh=Split(Replace(Replace(ProductNameCh,", ",",")," ","_"),",")
+	arr_ProductNameEn=Split(Replace(Replace(ProductNameEn,", ",",")," ","_"),",")
+	arr_Sequence=Split(Replace(Sequence," ",""),",")
+	arr_ClickNumber=Split(Replace(ClickNumber," ",""),",")
+	For i = 0 To UBound(arr_id)
+	conn.execute("update ChinaQJ_Products set ProductNo='"&arr_ProductNo(i)&"' where id="&arr_id(i)&"")
+	conn.execute("update ChinaQJ_Products set ProductNameCh='"&Replace(arr_ProductNameCh(i),"_"," ")&"' where id="&arr_id(i)&"")
+	conn.execute("update ChinaQJ_Products set ProductNameEn='"&Replace(Replace(arr_ProductNameEn(i),"_"," "),"'","''")&"' where id="&arr_id(i)&"")
+	conn.execute("update ChinaQJ_Products set Sequence='"&arr_Sequence(i)&"' where id="&arr_id(i)&"")
+	conn.execute("update ChinaQJ_Products set ClickNumber='"&arr_ClickNumber(i)&"' where id="&arr_id(i)&"")
+	Next
+	response.redirect request.servervariables("http_referer")
+	case "中文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Products set ViewFlagCh = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "中文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Products set ViewFlagCh = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Products set ViewFlagEn = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Products set ViewFlagEn = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+    if SelectID<>"" Then
+	If ISHTML = 1 Then
+		ix=0
+		SelectID=replace(SelectID," ","")
+		len_idx=len(SelectID)
+		tempx=tempx&left(SelectID,1)
+		Do While ix<len_idx
+			ix=ix+1
+			tempx=left(SelectID,1)
+			If tempx="," Then
+				set rs = server.createobject("adodb.recordset")
+				sql="select * from ChinaQJ_Products where id="&selectx
+				rs.open sql,conn,1,1
+				ProNameSeo=rs("ClassSeo")
+				Call DoDelslhtml("./Ch/"&ProNameSeo&""&Separated&""&selectx&"."&HTMLName&"")
+				Call DoDelslhtml("./En/"&ProNameSeo&""&Separated&""&selectx&"."&HTMLName&"")
+				rs.close
+				set rs=nothing
+				conn.execute "delete from ChinaQJ_Products where id="&selectx
+				selectx=""
+			Else
+				selectx=selectx&tempx
+			End If
+			if len_idx-ix=0 Then
+			set rs = server.createobject("adodb.recordset")
+			sql="select * from ChinaQJ_Products where id="&selectx
+			rs.open sql,conn,1,1
+			ProNameSeo=rs("ClassSeo")
+			Call DoDelslhtml("./Ch/"&ProNameSeo&""&Separated&""&selectx&"."&HTMLName&"")
+			Call DoDelslhtml("./En/"&ProNameSeo&""&Separated&""&selectx&"."&HTMLName&"")
+			rs.close
+			set rs=nothing
+			conn.execute "delete from ChinaQJ_Products where id="&selectx
+			end if
+			SelectID=right(SelectID,len_idx-ix)
+		Loop
+	else
+	conn.execute "delete from ChinaQJ_Products where id in ("&SelectID&")"
+	End If
+	end if
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "News"
+    select case Trim(Request.Form("batch"))
+	case "中文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_News set ViewFlagCh = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "中文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_News set ViewFlagCh = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_News set ViewFlagEn = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_News set ViewFlagEn = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+    if SelectID<>"" Then
+	If ISHTML = 1 Then
+		ix=0
+		SelectID=replace(SelectID," ","")
+		len_idx=len(SelectID)
+		tempx=tempx&left(SelectID,1)
+		Do While ix<len_idx
+			ix=ix+1
+			tempx=left(SelectID,1)
+			If tempx="," Then
+				set rs = server.createobject("adodb.recordset")
+				sql="select * from ChinaQJ_News where id="&selectx
+				rs.open sql,conn,1,1
+				NewNameSeo=rs("ClassSeo")
+				Call DoDelslhtml("./Ch/"&NewNameSeo&""&Separated&""&selectx&"."&HTMLName&"")
+				Call DoDelslhtml("./En/"&NewNameSeo&""&Separated&""&selectx&"."&HTMLName&"")
+				rs.close
+				set rs=nothing
+				conn.execute "delete from ChinaQJ_News where id="&selectx
+				selectx=""
+			Else
+				selectx=selectx&tempx
+			End If
+			if len_idx-ix=0 Then
+			set rs = server.createobject("adodb.recordset")
+			sql="select * from ChinaQJ_News where id="&selectx
+			rs.open sql,conn,1,1
+			NewNameSeo=rs("ClassSeo")
+			Call DoDelslhtml("./Ch/"&NewNameSeo&""&Separated&""&selectx&"."&HTMLName&"")
+			Call DoDelslhtml("./En/"&NewNameSeo&""&Separated&""&selectx&"."&HTMLName&"")
+			rs.close
+			set rs=nothing
+			conn.execute "delete from ChinaQJ_News where id="&selectx
+			end if
+			SelectID=right(SelectID,len_idx-ix)
+		Loop
+	else
+	conn.execute "delete from ChinaQJ_News where id in ("&SelectID&")"
+	End If
+	end if
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "UserMessage"
+    select case Trim(Request.Form("batch"))
+	case "批量处理"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Biz set BizOK = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Biz where id in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Download"
+    select case Trim(Request.Form("batch"))
+	case "中文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Download set ViewFlagCh = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "中文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Download set ViewFlagCh = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Download set ViewFlagEn = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Download set ViewFlagEn = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+    if SelectID<>"" Then
+	If ISHTML = 1 Then
+		ix=0
+		SelectID=replace(SelectID," ","")
+		len_idx=len(SelectID)
+		tempx=tempx&left(SelectID,1)
+		Do While ix<len_idx
+			ix=ix+1
+			tempx=left(SelectID,1)
+			If tempx="," Then
+				set rs = server.createobject("adodb.recordset")
+				sql="select * from ChinaQJ_Download where id="&selectx
+				rs.open sql,conn,1,1
+				DownNameDiySeo=rs("ClassSeo")
+				Call DoDelslhtml("./Ch/"&DownNameDiySeo&""&Separated&""&selectx&"."&HTMLName&"")
+				Call DoDelslhtml("./En/"&DownNameDiySeo&""&Separated&""&selectx&"."&HTMLName&"")
+				rs.close
+				set rs=nothing
+				conn.execute "delete from ChinaQJ_Download where id="&selectx
+				selectx=""
+			Else
+				selectx=selectx&tempx
+			End If
+			if len_idx-ix=0 Then
+			set rs = server.createobject("adodb.recordset")
+			sql="select * from ChinaQJ_Download where id="&selectx
+			rs.open sql,conn,1,1
+			DownNameDiySeo=rs("ClassSeo")
+			Call DoDelslhtml("./Ch/"&DownNameDiySeo&""&Separated&""&selectx&"."&HTMLName&"")
+			Call DoDelslhtml("./En/"&DownNameDiySeo&""&Separated&""&selectx&"."&HTMLName&"")
+			rs.close
+			set rs=nothing
+			conn.execute "delete from ChinaQJ_Download where id="&selectx
+			end if
+			SelectID=right(SelectID,len_idx-ix)
+		Loop
+	else
+	conn.execute "delete from ChinaQJ_Download where id in ("&SelectID&")"
+	End If
+	end if
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Jobs"
+    select case Trim(Request.Form("batch"))
+	case "中文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Jobs set ViewFlagCh = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "中文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Jobs set ViewFlagCh = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Jobs set ViewFlagEn = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Jobs set ViewFlagEn = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+    if SelectID<>"" Then
+	If ISHTML = 1 Then
+		ix=0
+		SelectID=replace(SelectID," ","")
+		len_idx=len(SelectID)
+		tempx=tempx&left(SelectID,1)
+		Do While ix<len_idx
+			ix=ix+1
+			tempx=left(SelectID,1)
+			If tempx="," Then
+				set rs = server.createobject("adodb.recordset")
+				sql="select * from ChinaQJ_Jobs where id="&selectx
+				rs.open sql,conn,1,1
+				JobNameDiySeo=rs("ClassSeo")
+				Call DoDelslhtml("./Ch/"&JobNameDiySeo&""&Separated&""&selectx&"."&HTMLName&"")
+				Call DoDelslhtml("./En/"&JobNameDiySeo&""&Separated&""&selectx&"."&HTMLName&"")
+				rs.close
+				set rs=nothing
+				conn.execute "delete from ChinaQJ_Jobs where id="&selectx
+				selectx=""
+			Else
+				selectx=selectx&tempx
+			End If
+			if len_idx-ix=0 Then
+			set rs = server.createobject("adodb.recordset")
+			sql="select * from ChinaQJ_Jobs where id="&selectx
+			rs.open sql,conn,1,1
+			JobNameDiySeo=rs("ClassSeo")
+			Call DoDelslhtml("./Ch/"&JobNameDiySeo&""&Separated&""&selectx&"."&HTMLName&"")
+			Call DoDelslhtml("./En/"&JobNameDiySeo&""&Separated&""&selectx&"."&HTMLName&"")
+			rs.close
+			set rs=nothing
+			conn.execute "delete from ChinaQJ_Jobs where id="&selectx
+			end if
+			SelectID=right(SelectID,len_idx-ix)
+		Loop
+	else
+	conn.execute "delete from ChinaQJ_Jobs where id in ("&SelectID&")"
+	End If
+	end if
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Message"
+    select case Trim(Request.Form("batch"))
+	case "中文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Message set ViewFlagCh = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "中文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Message set ViewFlagCh = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Message set ViewFlagEn = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Message set ViewFlagEn = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Message where id in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Order"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Order where id in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+  case "Talents"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Talents where id in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+  case "Navigation"
+    select case Trim(Request.Form("batch"))
+	case "中文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Navigation set ViewFlagCh = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "中文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Navigation set ViewFlagCh = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Navigation set ViewFlagEn = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Navigation set ViewFlagEn = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_Navigation where id in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "FriendLink"
+    select case Trim(Request.Form("batch"))
+	case "中文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_FriendLink set ViewFlagCh = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "中文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_FriendLink set ViewFlagCh = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_FriendLink set ViewFlagEn = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_FriendLink set ViewFlagEn = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+    if SelectID<>"" Then conn.execute "delete from ChinaQJ_FriendLink where id in ("&SelectID&")"
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case "Language"
+	if ID<>"" then
+	  sqld="select ChinaQJ_Language_File from ChinaQJ_Language where id="&ID
+	  set rsd=server.createobject("adodb.recordset")
+	  rsd.open sqld,conn,1,1
+	  Language_File=rsd("ChinaQJ_Language_File")
+	  conn.execute "alter table ChinaQJ_Site drop SiteTitle"&Language_File&",Keywords"&Language_File&",Descriptions"&Language_File&",ComName"&Language_File&",Address"&Language_File&",SiteIndexNotice"&Language_File&",Video"&Language_File&",PageBanner"&Language_File&",PageBannerType"&Language_File&",PageBannerWidth"&Language_File&",PageBannerHeight"&Language_File&",SiteDetail"&Language_File&""
+	  conn.execute "alter table ChinaQJ_Navigation drop NavName"&Language_File&",ViewFlag"&Language_File&",IndexView"&Language_File&""
+	  conn.execute "alter table ChinaQJ_FriendLink drop LinkName"&Language_File&",ViewFlag"&Language_File&",LinkFace"&Language_File&""
+	  conn.execute "alter table ChinaQJ_NetWork drop ChinaQJ_Company"&Language_File&",ChinaQJ_Address"&Language_File&",ChinaQJ_User"&Language_File&",ChinaQJ_Demo"&Language_File&""
+	  
+	  conn.execute "alter table ChinaQJ_DownSort drop SortName"&Language_File&",ViewFlag"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&""
+	  conn.execute "alter table ChinaQJ_OthersSort drop SortName"&Language_File&",ViewFlag"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&""
+	  conn.execute "alter table ChinaQJ_ProductSort drop SortName"&Language_File&",ViewFlag"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&""
+	  conn.execute "alter table ChinaQJ_NewsSort drop SortName"&Language_File&",ViewFlag"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&""
+	  conn.execute "alter table ChinaQJ_ImageSort drop SortName"&Language_File&",ViewFlag"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&""
+	  conn.execute "alter table ChinaQJ_VideoSort drop SortName"&Language_File&",ViewFlag"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&""
+
+	  conn.execute "alter table ChinaQJ_News drop NewsName"&Language_File&",ViewFlag"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&",Source"&Language_File&",Content"&Language_File&",TheTags"&Language_File&""
+	  conn.execute "alter table ChinaQJ_About drop AboutName"&Language_File&",ViewFlag"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&",Content"&Language_File&",TheTags"&Language_File&""
+	  conn.execute "alter table ChinaQJ_Products drop ProductName"&Language_File&",ViewFlag"&Language_File&",CommendFlag"&Language_File&",NewFlag"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&",Content"&Language_File&",ProName"&Language_File&",ProInfo"&Language_File&",TheTags"&Language_File&",Remark"&Language_File&""
+	  conn.execute "alter table ChinaQJ_Download drop DownName"&Language_File&",ViewFlag"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&",Content"&Language_File&",TheTags"&Language_File&""
+	  conn.execute "alter table ChinaQJ_Others drop OthersName"&Language_File&",ViewFlag"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&",Content"&Language_File&",TheTags"&Language_File&""
+	  conn.execute "alter table ChinaQJ_image drop ImageName"&Language_File&",ViewFlag"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&",Content"&Language_File&",TheTags"&Language_File&""
+	  conn.execute "alter table ChinaQJ_Video drop VideoName"&Language_File&",ViewFlag"&Language_File&""
+	  conn.execute "alter table ChinaQJ_KeyIdea drop KeyIdeaName"&Language_File&",Content"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&",TheTags"&Language_File&""
+	  
+	  conn.execute "alter table ChinaQJ_Jobs drop JobName"&Language_File&",ViewFlag"&Language_File&",SeoKeywords"&Language_File&",SeoDescription"&Language_File&",JobAddress"&Language_File&",Emolument"&Language_File&",Responsibility"&Language_File&",Requirement"&Language_File&",eEmployer"&Language_File&",eContact"&Language_File&",eAddress"&Language_File&""
+	  conn.execute "alter table ChinaQJ_Message drop ViewFlag"&Language_File&""
+	  conn.execute "alter table ChinaQJ_Subsidiary drop Subsidiary"&Language_File&",PropertyName"&Language_File&",PropertyValue"&Language_File&""
+	  conn.execute "alter table ChinaQJ_MemGroup drop GroupName"&Language_File&""
+	  conn.execute "alter table ChinaQJ_Properties drop ProProperties"&Language_File&""
+	  FolderPath="/"&Language_File
+	  delfolder(FolderPath)
+	  rsd.close
+	  set rsd=nothing
+	  Language_File="" 
+	end if
+    if ID<>"" Then conn.execute "delete from ChinaQJ_Language where id="&ID
+    response.redirect request.servervariables("http_referer")
+  case "Others"
+    select case Trim(Request.Form("batch"))
+	case "中文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Others set ViewFlagCh = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "中文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Others set ViewFlagCh = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文生效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Others set ViewFlagEn = 1 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "英文失效"
+	if SelectID<>"" Then conn.execute "update ChinaQJ_Others set ViewFlagEn = 0 where id in ("&SelectID&")"
+	response.redirect request.servervariables("http_referer")
+	case "删除所选"
+    if SelectID<>"" Then
+	If ISHTML = 1 Then
+		ix=0
+		SelectID=replace(SelectID," ","")
+		len_idx=len(SelectID)
+		tempx=tempx&left(SelectID,1)
+		Do While ix<len_idx
+			ix=ix+1
+			tempx=left(SelectID,1)
+			If tempx="," Then
+				set rs = server.createobject("adodb.recordset")
+				sql="select * from ChinaQJ_Others where id="&selectx
+				rs.open sql,conn,1,1
+				OtherNameSeo=rs("ClassSeo")
+				Call DoDelslhtml("./Ch/"&OtherNameSeo&""&Separated&""&selectx&"."&HTMLName&"")
+				Call DoDelslhtml("./En/"&OtherNameSeo&""&Separated&""&selectx&"."&HTMLName&"")
+				rs.close
+				set rs=nothing
+				conn.execute "delete from ChinaQJ_Others where id="&selectx
+				selectx=""
+			Else
+				selectx=selectx&tempx
+			End If
+			if len_idx-ix=0 Then
+			set rs = server.createobject("adodb.recordset")
+			sql="select * from ChinaQJ_Others where id="&selectx
+			rs.open sql,conn,1,1
+			OtherNameSeo=rs("ClassSeo")
+			Call DoDelslhtml("./Ch/"&OtherNameSeo&""&Separated&""&selectx&"."&HTMLName&"")
+			Call DoDelslhtml("./En/"&OtherNameSeo&""&Separated&""&selectx&"."&HTMLName&"")
+			rs.close
+			set rs=nothing
+			conn.execute "delete from ChinaQJ_Others where id="&selectx
+			end if
+			SelectID=right(SelectID,len_idx-ix)
+		Loop
+	else
+	conn.execute "delete from ChinaQJ_Others where id in ("&SelectID&")"
+	End If
+	end if
+    response.redirect request.servervariables("http_referer")
+	End Select
+  case else
+end select
+
+Sub DoDelslhtml(htmlname)
+  On Error Resume Next
+  Dim FSO,systempath
+  systempath=htmlname
+  Set FSO = Server.CreateObject("Scripting.FileSystemObject")
+  FSO.DeleteFile(server.MapPath("../" & systempath))
+  Set FSO = Nothing
+End Sub
+
+Function delfolder(path)
+ Set fso = CreateObject("Scripting.FileSystemObject")
+ fso.DeleteFolder(server.mappath(path))
+ set fso = Nothing
+End Function
+%>

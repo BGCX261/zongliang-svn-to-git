@@ -1,0 +1,703 @@
+﻿<!--#include file="../Include/Const.asp" -->
+<!--#include file="../Include/ConnSiteData.asp" -->
+<!--#include file="../Include/Version.asp" -->
+<!--#include file="CheckAdmin.asp"-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="Images/Admin_style.css">
+<script language="javascript" src="../Scripts/Admin.js"></script>
+<script language="javascript" src="JavaScript/Tab.js"></script>
+<script language="javascript">
+<!--
+function changedbtype(dbtype){
+  var accesstr = document.getElementById("accesstr");
+  var sqltr = document.getElementById("sqltr");
+  if(dbtype == 0){
+    accesstr.style.display = '';
+    sqltr.style.display = 'none';
+  }else{
+    accesstr.style.display = 'none';
+    sqltr.style.display = '';
+  }
+}
+function get(){
+    document.getElementById("ProInfo").value=document.getElementById("ProInfoline").value*document.getElementById("ProInfoColumn").value;
+}
+//-->
+</script>
+<%
+if Instr(session("AdminPurview"),"|1,")=0 then
+  response.write ("<br /><br /><div align=""center""><font style=""color:red; font-size:9pt; "")>您没有管理该模块的权限！</font></div>")
+  response.end
+end If
+select case request.QueryString("Action")
+  case "Save"
+    SaveSiteInfo
+  case "SaveConst"
+    SaveConstInfo
+end select
+%>
+<body onLoad="changedbtype(0);">
+<br />
+<table class="tableBorder" width="95%" border="0" align="center" cellpadding="5" cellspacing="1">
+  <form name="ConstForm" method="post" action="?Action=SaveConst">
+    <tr>
+      <th height="22" colspan="2" sytle="line-height:150%">【系统高级参数设置】</th>
+    </tr>
+    <tr>
+      <td width="20%" align="right" class="forumRow">系统安装目录：</td>
+      <td width="80%" class="forumRowHighlight"><input name="SysRootDir" type="text" id="SysRootDir" style="width: 280" value="<%=SysRootDir%>">
+        <font color="red">*</font></td>
+    </tr>
+<% 
+set rs = server.createobject("adodb.recordset")
+sql="select * from ChinaQJ_Language order by ChinaQJ_Language_Order"
+rs.open sql,conn,1,1
+while(not rs.eof)
+%>
+    <tr>
+      <td align="right" class="forumRow"><%= rs("ChinaQJ_Language_Name") %>模块目录：</td>
+      <td class="forumRowHighlight"><input name="SysLanguageTarget<%= rs("ChinaQJ_Language_File") %>" type="text" id="SysLanguageTarget<%= rs("ChinaQJ_Language_File") %>" value="<%= rs("ChinaQJ_Language_File") %>" style="width:80px;background-color: #FFFFF0" disabled="disabled">
+        <font color="red">* (New) 前台<%= rs("ChinaQJ_Language_Name") %>模块目录</font></td>
+    </tr>
+<% 
+rs.movenext
+wend
+rs.close
+set rs=nothing
+%>
+    <tr>
+      <td align="right" class="forumRow">数据库类型：</td>
+      <td class="forumRowHighlight"><input name="IsDatabaseType" type="radio" value="0" <%if IsDatabaseType=0 then%> checked<%end if%> onClick="javascript:changedbtype(0);">
+        Access数据库
+        <input name="IsDatabaseType" type="radio" value="1"  <%if IsDatabaseType=1 then%> checked<%end if%> onClick="javascript:changedbtype(1);">
+        SQL数据库 <font color="red">*</font></td>
+    </tr>
+    <tr id="accesstr" name="accesstr">
+      <td align="right" class="forumRow">Access数据库：</td>
+      <td class="forumRowHighlight">目录名称：<input name="SiteDataPath" type="text" id="SiteDataPath" value="<%= SiteDataPath %>" style="background-color: #FFFFF0;width:180px;" readonly> <font color="red">*</font><br />
+        数据库名：<input name="SiteDataAccess" type="text" id="SiteDataAccess" value="<%= SiteDataAccess %>" style="width:180px;background-color: #FFFFF0;" readonly> <font color="red">*</font></td>
+    </tr>
+    <tr id="sqltr" name="sqltr">
+      <td align="right" class="forumRow">SQL数据库参数：</td>
+      <td class="forumRowHighlight">服务器IP：
+        <input name="DEF_SQLserver" type="text" value="<%= DEF_SQLserver %>">
+        <font color="red">*</font>
+        <br />
+        数据库名：
+        <input name="DEF_SQLdatabase" type="text" value="<%= DEF_SQLdatabase %>">
+        <font color="red">*</font>
+        <br />
+        登录用户：
+        <input name="DEF_SQLusername" type="text" value="<%= DEF_SQLusername %>">
+        <font color="red">*</font>
+        <br />
+        登录密码：
+        <input name="DEF_SQLpassword" type="password" value="<%= DEF_SQLpassword %>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">是否启用防注入系统：</td>
+      <td class="forumRowHighlight"><input name="EnableStopInjection" type="radio" value="1" <%if EnableStopInjection=1 then%> checked<%end if%>>
+        启用
+        <input name="EnableStopInjection" type="radio" value="0" <%if EnableStopInjection=0 then%> checked<%end if%>>
+        不启用 <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">是否启用后台登录验证码：</td>
+      <td class="forumRowHighlight"><input name="EnableSiteCheckCode" type="radio" value="1"  <%if EnableSiteCheckCode=1 then%> checked<%end if%>>
+        启用
+        <input name="EnableSiteCheckCode" type="radio" value="0" <%if EnableSiteCheckCode=0 then%> checked<%end if%>>
+        不启用 <font color="red">* (New)</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">是否启用管理员认证码：</td>
+      <td class="forumRowHighlight"><input name="EnableSiteManageCode" type="radio" value="1" <%if EnableSiteManageCode=1 then%> checked<%end if%>>
+        启用
+        <input name="EnableSiteManageCode" type="radio" value="0" <%if EnableSiteManageCode=0 then%> checked<%end if%>>
+        不启用 <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">管理员认证码：</td>
+      <td class="forumRowHighlight"><input name="SiteManageCode" type="text" id="SiteManageCode" style="width: 80" value="<%=SiteManageCode%>" maxlength="6">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">开启首页弹出公告：</td>
+      <td class="forumRowHighlight"><input type="radio" name="IndexNotice" value="1" <%if IndexNotice=1 then%> checked<%end if%>>
+        启用
+        <input type="radio" name="IndexNotice" value="0" <%if IndexNotice=0 then%> checked<%end if%>>
+        不启用 <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">页面防刷新时间：</td>
+      <td class="forumRowHighlight"><input name="Refresh" type="text" id="Refresh" style="width: 80" value="<%=Refresh%>">
+        秒 <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">新闻模块单页调用条数：</td>
+      <td class="forumRowHighlight"><input name="NewInfo" type="text" id="NewInfo" style="width: 80" value="<%=NewInfo%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">产品模块单页调用条数：</td>
+      <td class="forumRowHighlight"><input name="ProInfo" type="text" id="ProInfo" style="width: 80" value="<%=ProInfo%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">人才模块单页调用条数：</td>
+      <td class="forumRowHighlight"><input name="JobInfo" type="text" id="JobInfo" style="width: 80" value="<%=JobInfo%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">下载模块单页调用条数：</td>
+      <td class="forumRowHighlight"><input name="DownInfo" type="text" id="DownInfo" style="width: 80" value="<%=DownInfo%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">其他信息单页调用条数：</td>
+      <td class="forumRowHighlight"><input name="OtherInfo" type="text" id="OtherInfo" style="width: 80" value="<%=OtherInfo%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">服务范围单页调用条数：</td>
+      <td class="forumRowHighlight"><input name="KeyInfo" type="text" id="KeyInfo" style="width: 80" value="<%=KeyInfo%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">留言模块单页调用条数：</td>
+      <td class="forumRowHighlight"><input name="MessageInfo" type="text" id="MessageInfo" style="width: 80" value="<%=MessageInfo%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">是否生成静态页面：</td>
+      <td class="forumRowHighlight"><input name="ISHTML" type="radio" value="1" <%if ISHTML = 1 then%> checked<%end if%>>
+        生成静态HTML
+        <input name="ISHTML" type="radio" value="0" <%if ISHTML = 0 then%> checked<%end if%>>
+        不生成 <font color="red">*</font></td>
+    </tr>
+     <tr>
+      <td align="right" class="forumRow">开启后台汉字转换拼音：</td>
+      <td class="forumRowHighlight"><input type="radio" name="ClassSeoISPY" value="1" <%if ClassSeoISPY = 1 then%> checked<%end if%>>启用 <input type="radio" name="ClassSeoISPY" value="0" <%if ClassSeoISPY = 0 then%> checked<%end if%>>不启用 <font color="red">如您启用静态功能，则选项必须为开启状态。</font></td>
+    </tr>    <tr>
+      <td align="right" class="forumRow">生成静态页面后缀：</td>
+      <td class="forumRowHighlight"><select style="width: 80" name="HTMLName">
+          <option value="html" <%if HTMLName="html" then response.write "selected"%>>html</option>
+          <option value="htm" <%if HTMLName="htm" then response.write "selected"%>>htm</option>
+          <option value="shtml" <%if HTMLName="shtml" then response.write "selected"%>>shtml</option>
+          <option value="asp" <%if HTMLName="asp" then response.write "selected"%>>asp</option>
+        </select>
+        <font color="red">*</font> 如：New.html中“html”即为后缀。可设置如：html、htm、shtml、asp</td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">新闻分类生成前缀：</td>
+      <td class="forumRowHighlight"><input name="NewSortName" type="text" id="NewSortName" style="width: 180" value="<%=NewSortName%>">
+        <font color="red">*</font> 如：New-1.html中“New”即为前缀</td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">新闻详细页生成前缀：</td>
+      <td class="forumRowHighlight"><input name="NewName" type="text" id="NewName" style="width: 180" value="<%=NewName%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">产品分类生成前缀：</td>
+      <td class="forumRowHighlight"><input name="ProSortName" type="text" id="ProSortName" style="width: 180" value="<%=ProSortName%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">产品详细页生成前缀：</td>
+      <td class="forumRowHighlight"><input name="ProName" type="text" id="ProName" style="width: 180" value="<%=ProName%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">案例分类生成前缀：</td>
+      <td class="forumRowHighlight"><input name="ImageSortName" type="text" id="ImageSortName" style="width: 180" value="<%=ImageSortName%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">案例详细页生成前缀：</td>
+      <td class="forumRowHighlight"><input name="ImageName" type="text" id="ImageName" style="width: 180" value="<%=ImageName%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">下载分类生成前缀：</td>
+      <td class="forumRowHighlight"><input name="DownSortName" type="text" id="DownSortName" style="width: 180" value="<%=DownSortName%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">下载详细页生成前缀：</td>
+      <td class="forumRowHighlight"><input name="DownNameDiy" type="text" id="DownNameDiy" style="width: 180" value="<%=DownNameDiy%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">其他信息分类生成前缀：</td>
+      <td class="forumRowHighlight"><input name="OtherSortName" type="text" id="OtherSortName" style="width: 180" value="<%=OtherSortName%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">其他信息详细页生成前缀：</td>
+      <td class="forumRowHighlight"><input name="OtherName" type="text" id="OtherName" style="width: 180" value="<%=OtherName%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">服务范围分类生成前缀：</td>
+      <td class="forumRowHighlight"><input name="KeySortName" type="text" id="KeySortName" style="width: 180" value="<%=KeySortName%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">服务范围详细页生成前缀：</td>
+      <td class="forumRowHighlight"><input name="KeysName" type="text" id="KeysName" style="width: 180" value="<%=KeysName%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">人才分类生成前缀：</td>
+      <td class="forumRowHighlight"><input name="JobSortName" type="text" id="JobSortName" style="width: 180" value="<%=JobSortName%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">人才详细页生成前缀：</td>
+      <td class="forumRowHighlight"><input name="JobNameDiy" type="text" id="JobNameDiy" style="width: 180" value="<%=JobNameDiy%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">企业信息生成前缀：</td>
+      <td class="forumRowHighlight"><input name="AboutNameDiy" type="text" id="AboutNameDiy" style="width: 180" value="<%=AboutNameDiy%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">联系我们生成前缀：</td>
+      <td class="forumRowHighlight"><input name="ContactUsDiy" type="text" id="ContactUsDiy" style="width: 180" value="<%=ContactUsDiy%>">
+        <font color="red">*</font></td>
+    </tr>
+	<tr>
+      <td align="right" class="forumRow">产品询价生成前缀：</td>
+      <td class="forumRowHighlight"><input name="AdvisoryNameDiy" type="text" id="AdvisoryNameDiy" style="width: 180" value="<%=AdvisoryNameDiy%>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">分隔符：</td>
+      <td class="forumRowHighlight"><input name="Separated" type="text" id="Separated" style="width: 80" value="<%=Separated%>">
+        <font color="red">*</font> 如：New-1.html中的“-”即为分隔符</td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">是否开启附语言管理：</td>
+      <td class="forumRowHighlight"><input name="ISOther" type="radio" value="1"  <%if ISOther=1 then response.write "checked"%>>
+        开启
+        <input name="ISOther" type="radio" value="0" <%if ISOther=0 then response.write "checked"%>>
+        关闭 <font color="red">* (New)</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">树形分类默认状态：</td>
+      <td class="forumRowHighlight"><input name="SortStart" type="radio" value="1" <%if SortStart=1 then response.write "checked"%>>
+        打开
+        <input name="SortStart" type="radio" value="0" <%if SortStart=0 then response.write "checked"%>>
+        关闭 <font color="red">* (New)</font></td>
+    </tr>
+	<tr>
+	  <td align="right" class="forumRow">后台文本编辑器选择:</td>
+	  <td class="forumRowHighlight"><input name="editType" type="radio" value="0" <%If editType=0 Then Response.write "checked" %>>
+		UEditor
+		<input name="editType" type="radio" value="1" <%If editType=1 Then Response.write "checked" %>>
+		KindEditor  <font color="red">* (New)</font>
+	</tr>
+	<tr>
+      <th height="22" colspan="2" sytle="line-height:150%">【浮动客户即时咨询参数】</th>
+    </tr>
+	<tr>
+      <td align="right" class="forumRow">是否启用浮动客户咨询：</td>
+      <td class="forumRowHighlight"><input name="JMailDisplay" type="radio" value="1" <% If JMailDisplay="1" Then Response.Write("checked")%>>
+        启用
+        <input name="JMailDisplay" type="radio" value="0" <% If JMailDisplay="0" Then Response.Write("checked")%>>
+        不启用 <font color="red">*</font> 启用后客户咨询问题会自动记录到后台</td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">选择前台浮动客户咨询样式：</td>
+      <td class="forumRowHighlight"><table cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td><table cellpadding="3" cellspacing="0">
+                <tr>
+                  <td align="center" id="ImagesBorder"><img src="Images/MessageSkin/Skin01.png" alt="样式一" width="80" /></td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">样式一
+                    <input type="radio" name="MessageSkin" value="1" <% If MessageSkin="1" Then Response.Write("checked")%>></td>
+                </tr>
+              </table></td>
+            <td width="8"></td>
+            <td><table cellpadding="3" cellspacing="0">
+                <tr>
+                  <td align="center" id="ImagesBorder"><img src="Images/MessageSkin/Skin02.png" alt="样式二" width="80" /></td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">样式二
+                    <input type="radio" name="MessageSkin" value="2" <% If MessageSkin="2" Then Response.Write("checked")%>></td>
+                </tr>
+              </table></td>
+            <td width="8"></td>
+            <td><table cellpadding="3" cellspacing="0">
+                <tr>
+                  <td align="center" id="ImagesBorder"><img src="Images/MessageSkin/Skin03.png" alt="样式三" width="80" /></td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">样式三
+                    <input type="radio" name="MessageSkin" value="3" <% If MessageSkin="3" Then Response.Write("checked")%>></td>
+                </tr>
+              </table></td>
+            <td width="8"></td>
+            <td><table cellpadding="3" cellspacing="0">
+                <tr>
+                  <td align="center" id="ImagesBorder"><img src="Images/MessageSkin/Skin04.png" alt="样式四" width="80" /></td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">样式四
+                    <input type="radio" name="MessageSkin" value="4" <% If MessageSkin="4" Then Response.Write("checked")%>></td>
+                </tr>
+              </table></td>
+            <td width="8"></td>
+          </tr>
+          <tr>
+            <td><table cellpadding="3" cellspacing="0">
+                <tr>
+                  <td align="center" id="ImagesBorder"><img src="Images/MessageSkin/Skin05.png" alt="样式五" width="80" /></td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">样式五
+                    <input type="radio" name="MessageSkin" value="5" <% If MessageSkin="5" Then Response.Write("checked")%>></td>
+                </tr>
+              </table></td>
+            <td width="8"></td>
+            <td><table cellpadding="3" cellspacing="0">
+                <tr>
+                  <td align="center" id="ImagesBorder"><img src="Images/MessageSkin/Skin06.png" alt="样式六" width="80" /></td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">样式六
+                    <input type="radio" name="MessageSkin" value="6" <% If MessageSkin="6" Then Response.Write("checked")%>></td>
+                </tr>
+              </table></td>
+            <td width="8"></td>
+            <td><table cellpadding="3" cellspacing="0">
+                <tr>
+                  <td align="center" id="ImagesBorder"><img src="Images/MessageSkin/Skin07.png" alt="样式七" width="80" /></td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">样式七
+                    <input type="radio" name="MessageSkin" value="7" <% If MessageSkin="7" Then Response.Write("checked")%>></td>
+                </tr>
+              </table></td>
+            <td width="8"></td>
+            <td><table cellpadding="3" cellspacing="0">
+                <tr>
+                  <td align="center" id="ImagesBorder"><img src="Images/MessageSkin/Skin08.png" alt="样式八" width="80" /></td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">样式八
+                    <input type="radio" name="MessageSkin" value="8" <% If MessageSkin="8" Then Response.Write("checked")%>></td>
+                </tr>
+              </table></td>
+            <td width="8"></td>
+          </tr>
+        </table></td>
+    </tr>
+	<tr>
+      <td align="right" class="forumRow">是否启用同步信箱通知：</td>
+      <td class="forumRowHighlight"><input name="JMailPubDisplay" type="radio" value="1" <% If JMailPubDisplay="1" Then Response.Write("checked")%>>
+        启用
+        <input name="JMailPubDisplay" type="radio" value="0" <% If JMailPubDisplay="0" Then Response.Write("checked")%>>
+        不启用 <font color="red">*</font> 开启此功能后，客户的咨询问题在记录到后台的同时，会同步发送到管理员设置好的信箱。</td>
+    </tr>
+	<tr>
+      <td align="right" class="forumRow">SMTP服务器：</td>
+      <td class="forumRowHighlight"><input name="JMailSMTP" type="text" id="JMailSMTP" style="width: 180" value="<%= JMailSMTP %>">
+        <font color="red">*</font></td>
+    </tr>
+	<tr>
+      <td align="right" class="forumRow">SMTP服务器用户名：</td>
+      <td class="forumRowHighlight"><input name="JMailUser" type="text" id="JMailUser" style="width: 180" value="<%= JMailUser %>">
+        <font color="red">*</font></td>
+    </tr>
+	<tr>
+      <td align="right" class="forumRow">SMTP服务器密码：</td>
+      <td class="forumRowHighlight"><input name="JMailPass" type="text" id="JMailPass" style="width: 180" value="<%= JMailPass %>">
+        <font color="red">*</font></td>
+    </tr>
+	<tr>
+      <td align="right" class="forumRow">发送人：</td>
+      <td class="forumRowHighlight"><input name="JMailName" type="text" id="JMailName" style="width: 180" value="<%= JMailName %>">
+        <font color="red">*</font></td>
+    </tr>
+	<tr>
+      <td align="right" class="forumRow">接收信箱：</td>
+      <td class="forumRowHighlight"><input name="JMailInFrom" type="text" id="JMailInFrom" style="width: 180" value="<%= JMailInFrom %>">
+        <font color="red">*</font></td>
+    </tr>
+	<tr>
+      <td align="right" class="forumRow">发送信箱：</td>
+      <td class="forumRowHighlight"><input name="JMailOutFrom" type="text" id="JMailOutFrom" style="width: 180" value="<%= JMailOutFrom %>">
+        <font color="red">*</font></td>
+    </tr>
+	<tr>
+      <td align="right" class="forumRow">反馈标题头：</td>
+      <td class="forumRowHighlight"><input name="JMailTitle" type="text" id="JMailTitle" style="width: 200" value="<%= JMailTitle %>">
+        <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <th height="22" colspan="2" sytle="line-height:150%">【新闻、产品、下载、其他、企业信息、人才等分类点击初始数参数】</th>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">是否启用随机初始数：</td>
+      <td class="forumRowHighlight"><input name="PubRndDisplay" type="radio" value="1" <%if PubRndDisplay=1 then response.write "checked"%>>
+        启用
+        <input name="PubRndDisplay" type="radio" value="0" <%if PubRndDisplay=0 then response.write "checked"%>>
+        不启用 <font color="red">* (New)</font> 启有后后台添加新闻、产品等详细页面时会启用随机浏览数值</td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">随机数设置：</td>
+      <td class="forumRowHighlight">起始随机值：<input name="PubRndNumStart" type="text" id="PubRndNumStart" style="width: 80" value="<%= PubRndNumStart %>">　结束随机值：<input name="PubRndNumEnd" type="text" id="PubRndNumEnd" style="width: 80" value="<%= PubRndNumEnd %>">
+        <font color="red">* (New)</font></td>
+    </tr>
+    <tr>
+      <th height="22" colspan="2" sytle="line-height:150%">【首页主动邀请QQ客服即时咨询参数】</th>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">是否开启QQ客服自动邀请：</td>
+      <td class="forumRowHighlight"><input name="QQKeFu" type="radio" value="1" <%if QQKeFu=1 then response.write "checked"%>>
+        启用
+        <input name="QQKeFu" type="radio" value="0" <%if QQKeFu=0 then response.write "checked"%>>
+        不启用 <font color="red">* (New)</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">QQ客服接待号码：</td>
+      <td class="forumRowHighlight"><input name="QQKeFuH" type="text" id="QQKeFuH" style="width: 80" value="<%= QQKeFuH %>">
+        <font color="red">* (New)</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">QQ客服显示公司名称：</td>
+      <td class="forumRowHighlight"><input name="QQKeFuCompany" type="text" id="QQKeFuCompany" style="width: 180" value="<%= QQKeFuCompany %>">
+        <font color="red">* (New)</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">QQ客服问候语：</td>
+      <td class="forumRowHighlight"><textarea name="QQKeFuDemo" id="QQKeFuDemo" style="width: 550 ;height: 30px"><%= QQKeFuDemo %></textarea>
+        <br /><font color="red">* (New)</font> 如有换行以“\n”代替</td>
+    </tr>
+    <tr>
+      <th height="22" colspan="2" sytle="line-height:150%">【两侧在线客服】</th>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">在线客服开关：</td>
+      <td class="forumRowHighlight"><input name="SysKefuSwitch" type="radio" value="1" <% If SysKefuSwitch="1" Then Response.Write("checked")%>>打开
+        <input name="SysKefuSwitch" type="radio" value="0"  <% If SysKefuSwitch="0" Then Response.Write("checked")%>>关闭 <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">在线客服位置：</td>
+      <td class="forumRowHighlight"><input name="SysKefuFloat" type="radio" value="0" <% If SysKefuFloat="0" Then Response.Write("checked")%>>左
+        <input name="SysKefuFloat" type="radio" value="1" <% If SysKefuFloat="1" Then Response.Write("checked")%>>右 <font color="red">*</font></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">在线客服悬浮框透明度：</td>
+      <td class="forumRowHighlight"><input name="SysKefuAlpla" type="text" id="SysKefuAlpla" style="width: 80px;" value="<%= SysKefuAlpla %>">
+        <font color="red">*</font> 如：85则表示透明度为85%</td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow">在线客服样式：</td>
+      <td class="forumRowHighlight"><table cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td><table cellpadding="3" cellspacing="0">
+                <tr>
+                  <td align="center" id="ImagesBorder"><img src="Images/KefuSkin/Kefu_1.png" alt="样式一" /></td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">样式一
+                    <input type="radio" name="SysKefuSkin" value="default" <% If SysKefuSkin="default" Then Response.Write("checked")%>></td>
+                </tr>
+              </table></td>
+            <td width="5"></td>
+            <td><table cellpadding="3" cellspacing="0">
+                <tr>
+                  <td align="center" id="ImagesBorder"><img src="Images/KefuSkin/Kefu_2.png" alt="样式二" /></td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">样式二
+                    <input type="radio" name="SysKefuSkin" value="gray" <% If SysKefuSkin="gray" Then Response.Write("checked")%>></td>
+                </tr>
+              </table></td>
+            <td width="5"></td>
+
+            <td><table cellpadding="3" cellspacing="0">
+                <tr>
+                  <td align="center" id="ImagesBorder"><img src="Images/KefuSkin/Kefu_3.png" alt="样式三" /></td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">样式三
+                    <input type="radio" name="SysKefuSkin" value="green" <% If SysKefuSkin="green" Then Response.Write("checked")%>></td>
+                </tr>
+              </table></td>
+            <td width="5"></td>
+            <td><table cellpadding="3" cellspacing="0">
+                <tr>
+                  <td align="center" id="ImagesBorder"><img src="Images/KefuSkin/Kefu_4.png" alt="样式四" /></td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">样式四
+                    <input type="radio" name="SysKefuSkin" value="orange" <% If SysKefuSkin="orange" Then Response.Write("checked")%>></td>
+                </tr>
+              </table></td>
+            <td width="5"></td>
+            <td><table cellpadding="3" cellspacing="0">
+                <tr>
+                  <td align="center" id="ImagesBorder"><img src="Images/KefuSkin/Kefu_5.png" alt="样式五" /></td>
+                </tr>
+                <tr>
+                  <td style="text-align: center;">样式五
+                    <input type="radio" name="SysKefuSkin" value="red" <% If SysKefuSkin="red" Then Response.Write("checked")%>></td>
+                </tr>
+              </table></td>
+            <td width="5"></td>
+          </tr>
+        </table></td>
+    </tr>
+    <tr>
+      <td align="right" class="forumRow"></td>
+      <td class="forumRowHighlight"><input name="submitSaveEdit" type="submit" id="submitSaveEdit" value="保存附加参数设置"></td>
+    </tr>
+  </form>
+</table>
+<br />
+<%
+Function SaveConstInfo()
+Set objStream = Server.CreateObject("ADODB.Stream") 
+With objStream 
+.Open 
+.Charset = "utf-8" 
+.Position = objStream.Size
+ hf = "<"&"!--#include file="& chr(34) & "CharSet.Asp" & chr(34) & "-->" & vbcrlf
+ hf = hf & "<" & "%" & vbcrlf
+ hf = hf & "Const SysRootDir = " & chr(34) & trim(request("SysRootDir")) & chr(34) & "" & vbcrlf
+
+set rs = server.createobject("adodb.recordset")
+sql="select * from ChinaQJ_Language order by ChinaQJ_Language_Order"
+rs.open sql,conn,1,1
+while(not rs.eof)
+
+ hf = hf & "Const SysLanguageTarget"&rs("ChinaQJ_Language_File")&" = " & chr(34) & rs("ChinaQJ_Language_File") & chr(34) & "" & vbcrlf
+
+rs.movenext
+wend
+rs.close
+set rs=nothing
+
+ hf = hf & "Const IsDatabaseType = " & trim(request("IsDatabaseType")) & "" & vbcrlf
+ hf = hf & "Const SiteDataPath = " & chr(34) & trim(request("SiteDataPath")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const SiteDataAccess = " & chr(34) & trim(request("SiteDataAccess")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const DEF_SQLserver = " & chr(34) & trim(request("DEF_SQLserver")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const DEF_SQLdatabase = " & chr(34) & trim(request("DEF_SQLdatabase")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const DEF_SQLusername = " & chr(34) & trim(request("DEF_SQLusername")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const DEF_SQLpassword = " & chr(34) & trim(request("DEF_SQLpassword")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const EnableStopInjection = " & trim(request("EnableStopInjection")) & "" & vbcrlf
+ hf = hf & "Const EnableSiteCheckCode = " & trim(request("EnableSiteCheckCode")) & "" & vbcrlf
+ hf = hf & "Const EnableSiteManageCode = " & trim(request("EnableSiteManageCode")) & "" & vbcrlf
+ hf = hf & "Const SiteManageCode = " & chr(34) & trim(request("SiteManageCode")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const IndexNotice = " & trim(request("IndexNotice")) & "" & vbcrlf
+ hf = hf & "Const Refresh = " & trim(request("Refresh")) & "" & vbcrlf
+ hf = hf & "Const NewInfo = " & trim(request("NewInfo")) & "" & vbcrlf
+ hf = hf & "Const ProInfo = " & trim(request("ProInfo")) & "" & vbcrlf
+ hf = hf & "Const JobInfo = " & trim(request("JobInfo")) & "" & vbcrlf
+ hf = hf & "Const DownInfo = " & trim(request("DownInfo")) & "" & vbcrlf
+ hf = hf & "Const OtherInfo = " & trim(request("OtherInfo")) & "" & vbcrlf
+ hf = hf & "Const KeyInfo = " & trim(request("KeyInfo")) & "" & vbcrlf
+ hf = hf & "Const MessageInfo = " & trim(request("MessageInfo")) & "" & vbcrlf
+ hf = hf & "Const ISHTML = " & trim(request("ISHTML")) & "" & vbcrlf
+ hf = hf & "Const ClassSeoISPY = " & trim(request("ClassSeoISPY")) & "" & vbcrlf
+ hf = hf & "Const HTMLName = " & chr(34) & trim(request("HTMLName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const NewSortName = " & chr(34) & trim(request("NewSortName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const NewName = " & chr(34) & trim(request("NewName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const ProSortName = " & chr(34) & trim(request("ProSortName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const ProName = " & chr(34) & trim(request("ProName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const ImageSortName = " & chr(34) & trim(request("ImageSortName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const ImageName = " & chr(34) & trim(request("ImageName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const DownSortName = " & chr(34) & trim(request("DownSortName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const DownNameDiy = " & chr(34) & trim(request("DownNameDiy")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const OtherSortName = " & chr(34) & trim(request("OtherSortName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const OtherName = " & chr(34) & trim(request("OtherName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const KeySortName = " & chr(34) & trim(request("KeySortName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const KeysName = " & chr(34) & trim(request("KeysName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const JobSortName = " & chr(34) & trim(request("JobSortName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const JobNameDiy = " & chr(34) & trim(request("JobNameDiy")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const AboutNameDiy = " & chr(34) & trim(request("AboutNameDiy")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const ContactUsDiy = " & chr(34) & trim(request("ContactUsDiy")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const AdvisoryNameDiy = " & chr(34) & trim(request("AdvisoryNameDiy")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const Separated = " & chr(34) & trim(request("Separated")) & chr(34) & "" & vbcrlf
+
+ hf = hf & "Const ISOther = " & trim(request("ISOther")) & "" & vbcrlf
+ hf = hf & "Const SortStart = " & trim(request("SortStart")) & "" & vbcrlf
+
+ hf = hf & "Const JMailDisplay = " & chr(34) & trim(request("JMailDisplay")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const MessageSkin = " & chr(34) & trim(request("MessageSkin")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const JMailPubDisplay = " & chr(34) & trim(request("JMailPubDisplay")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const JMailSMTP = " & chr(34) & trim(request("JMailSMTP")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const JMailUser = " & chr(34) & trim(request("JMailUser")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const JMailPass = " & chr(34) & trim(request("JMailPass")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const JMailName = " & chr(34) & trim(request("JMailName")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const JMailInFrom = " & chr(34) & trim(request("JMailInFrom")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const JMailOutFrom = " & chr(34) & trim(request("JMailOutFrom")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const JMailTitle = " & chr(34) & trim(request("JMailTitle")) & chr(34) & "" & vbcrlf
+
+ hf = hf & "Const PubRndDisplay = " & trim(request("PubRndDisplay")) & "" & vbcrlf
+ hf = hf & "Const PubRndNumStart = " & trim(request("PubRndNumStart")) & "" & vbcrlf
+ hf = hf & "Const PubRndNumEnd = " & trim(request("PubRndNumEnd")) & "" & vbcrlf
+ hf = hf & "Const QQKeFu = " & trim(request("QQKeFu")) & "" & vbcrlf
+ hf = hf & "Const QQKeFuH = " & chr(34) & trim(request("QQKeFuH")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const QQKeFuCompany = " & chr(34) & trim(request("QQKeFuCompany")) & chr(34) & "" & vbcrlf
+ hf = hf & "Const QQKeFuDemo = " & chr(34) & trim(request("QQKeFuDemo")) & chr(34) & "" & vbcrlf
+ 
+ hf = hf & "Const SysKefuSwitch = " & trim(request("SysKefuSwitch")) & "" & vbcrlf
+ hf = hf & "Const SysKefuFloat = " & trim(request("SysKefuFloat")) & "" & vbcrlf
+ hf = hf & "Const SysKefuAlpla = " & trim(request("SysKefuAlpla")) & "" & vbcrlf
+ hf = hf & "Const SysKefuSkin = " & chr(34) & trim(request("SysKefuSkin")) & chr(34) & "" & vbcrlf
+
+ hf = hf & "Const editType = " & trim(request("editType")) & "" & vbcrlf
+
+ hf = hf & "%" & ">"
+.WriteText=hf 
+.SaveToFile Server.mappath("../Include/Const.asp"),2 
+.Close 
+End With 
+Set objStream = Nothing
+ If trim(request("ISHTML")) = 0 Then Call FsoDelHtml(trim(request("HTMLName")))
+ response.Write "<script language=javascript>alert('系统高级参数设置成功！');location.href='SetConst.asp';</script>"
+End Function
+
+Sub FsoDelHtml(HTMLName)	'-----	Del
+Dim Fso,FsoOut,File
+set rs = server.createobject("adodb.recordset")
+sql="select * from ChinaQJ_Language order by ChinaQJ_Language_Order"
+rs.open sql,conn,1,1
+while(not rs.eof)
+Set Fso = Server.CreateObject("Scripting.FileSystemObject")
+ChSysRootDir=""&SysRootDir&rs("ChinaQJ_Language_File")&"/"
+Set FsoOut = Fso.GetFolder(Server.Mappath(ChSysRootDir))
+    For Each File In FsoOut.Files
+        If LCase(Mid(File.Name,InStrRev(File.Name,".")))="."&HTMLName&"" And HTMLName <> "asp" And File.Name <> "404.html" Then
+            Response.Write "<span style=""color:red; padding-left: 18px"">" & File.Name & "</span>删除成功<br />"
+            Fso.DeleteFile File.Path,True
+        End If
+    Next
+Set FsoOut = Nothing
+Set Fso = Nothing
+rs.movenext
+wend
+rs.close
+set rs=nothing
+Set Fso = Server.CreateObject("Scripting.FileSystemObject")
+ChSysRootDir=""&SysRootDir&""
+Set FsoOut = Fso.GetFolder(Server.Mappath(ChSysRootDir))
+    For Each File In FsoOut.Files
+        If LCase(Mid(File.Name,InStrRev(File.Name,".")))="."&HTMLName&"" And HTMLName <> "asp" And File.Name <> "404.html" Then
+            Response.Write "<span style=""color:red; padding-left: 18px"">" & File.Name & "</span>删除成功<br />"
+            Fso.DeleteFile File.Path,True
+        End If
+    Next
+Set FsoOut = Nothing
+Set Fso = Nothing
+End Sub
+%>

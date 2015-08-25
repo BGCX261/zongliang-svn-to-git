@@ -1,0 +1,24 @@
+{sdcms:include("head.htm")}
+<div id="content" class="content">
+  <div id="con_left">
+	<div id="news_page">
+	<div style="padding-left:24px;line-height:30px;">{sdcms:map}</div>
+	{@sdcms:loop table="sd_other" where="followid=0" order="ordnum desc"}
+		<br><a href="{@link}">{@title}</a><br>
+		{sdcms:loop table="sd_other" where="followid={@id}" order="ordnum desc"}
+			├ <a href="{link}">{title}</a><br>
+		{/sdcms:loop}
+	{/@sdcms:loop}
+	</div>
+  </div>
+  <div id="con_right">
+  <div class="contact">
+	<h3>7*24小时服务支持</h3>
+	{sdcms_r_info}
+	</div>
+    {sdcms_ad_rbootom}
+</div>
+<div class="clear"></div>
+<br />
+
+{sdcms:include("foot.htm")}	

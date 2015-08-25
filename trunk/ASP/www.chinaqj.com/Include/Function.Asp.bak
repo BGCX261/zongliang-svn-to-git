@@ -1,0 +1,938 @@
+﻿<%
+On Error Resume Next	'-----------Error
+
+Function ProcessSitelink(ContentHTML)
+    If GetCache("SitelinkState") = "No" Then ProcessSitelink = ContentHTML: Exit Function
+    If Not ChkCache("Sitelink") Then
+        Dim Rslink
+        Set Rslink = conn.Execute("Select [Text],[Link],[Replace],[Target],[Description] From [ChinaQJ_Link] Where [State] = 1 Order By [Order] Desc")
+        If Not Rslink.EOF Then
+            Call SetCache("Sitelink", Rslink.Getrows())
+            Call SetCache("SitelinkState", "Yes")
+        Else
+            Call SetCache("SitelinkState", "No")
+            ProcessSitelink = ContentHTML
+            Exit Function
+        End If
+        Rslink.Close: Set Rslink = Nothing
+    End If
+    Dim RegEx, Matches, Match
+    Set RegEx = New RegExp
+    RegEx.Ignorecase = True
+    RegEx.Global = True
+    Dim Dat, i, j, Url, UrlTitle
+    Dat = GetCache("Sitelink")
+    For i = 0 To UBound(Dat, 2)
+        j = 0
+        If InStr(ContentHTML, Dat(0, i)) > 0 Then
+            RegEx.Pattern = "(>[^><]*)" & Dat(0, i) & "([^><]*<)(?!/a)"
+            Set Matches = RegEx.Execute(">" & ContentHTML & "<")
+            For Each Match In Matches
+                UrlTitle = Dat(4, i)
+                If InStr(UrlTitle, "|") > 0 Then Randomize: UrlTitle = Split(UrlTitle, "|")(Round(UBound(Split(UrlTitle, "|")) * Rnd))
+                If Dat(3, i) = 1 Then Url = "<a href='" & Dat(1, i) & "' title='" & UrlTitle & "' target='_blank'>" & Dat(0, i) & "</a>" Else Url = "<a href='" & Dat(1, i) & "' title='" & UrlTitle & "'>" & Dat(0, i) & "</a>"
+                Url = Replace(Url, "$", "&#36;")
+                ContentHTML = Replace(ContentHTML, Match.Value, Match.SubMatches(0) & Url & Match.SubMatches(1))
+                j = j + 1: If Dat(2, i) > 0 And j >= Dat(2, i) Then Exit For
+            Next
+        End If
+    Next
+    ProcessSitelink = ContentHTML
+End Function
+
+function setcache(cachename,cachevalue)
+    dim cachedata
+    cachename = lcase(filterstr(cachename))
+    cachedata = application(Cacheflag & cachename)
+    if isarray(cachedata) then
+        cachedata(0) = Cachevalue
+        cachedata(1) = now()
+    else
+        Redim cachedata(2)
+        cachedata(0) = Cachevalue
+        cachedata(1) = now()
+    end if
+    application.lock
+    application(Cacheflag & cachename) = cachedata
+    application.unlock
+end function
+
+function getcache(cachename)
+    dim cachedata
+    cachename = lcase(filterstr(cachename))
+    cachedata = application(Cacheflag & cachename)
+    if isarray(cachedata) then getcache = cachedata(0) else getcache = ""
+end function
+
+function chkcache(cachename)
+    dim cachedata
+    chkcache = false
+    cachename = lcase(filterstr(cachename))
+    cachedata = application(Cacheflag & cachename)
+    if not isarray(cachedata) then exit function
+    if not IsDate(cachedata(1)) then exit function
+    if DateDiff("s", CDate(cachedata(1)), now()) < 60 * Cachetime then chkcache = true
+end Function
+
+function filterstr(str)
+    filterstr = lcase(str) : filterstr = replace(filterstr, " ", "") : filterstr = replace(filterstr, "'", "") : filterstr = replace(filterstr, """", "") : filterstr = replace(filterstr, "=", "") : filterstr = replace(filterstr, "*", "")
+end function
+
+Function ReplaceBadChar(strChar)
+    If strChar = "" Or IsNull(strChar) Then
+        ReplaceBadChar = ""
+        Exit Function
+    End If
+    Dim strBadChar, arrBadChar, tempChar, i
+    strBadChar = "+,',%,^,&,?,(,),<,>,[,],{,},/,\,;,:," & Chr(34) & "," & Chr(0) & ",--"
+    arrBadChar = Split(strBadChar, ",")
+    tempChar = strChar
+    For i = 0 To UBound(arrBadChar)
+        tempChar = Replace(tempChar, arrBadChar(i), "")
+    Next
+    tempChar = Replace(tempChar, "@@", "@")
+    ReplaceBadChar = tempChar
+End Function
+
+function StrLen(Str)
+  if Str="" or isnull(Str) then
+    StrLen=0
+    exit function
+  else
+    dim regex
+    set regex=new regexp
+    regEx.Pattern ="[^\x00-\xff]"
+    regex.Global =true
+    Str=regEx.replace(Str,"^^")
+    set regex=nothing
+    StrLen=len(Str)
+  end if
+end function
+
+function StrLeft(Str,StrLen)
+  dim L,T,I,C
+  if Str="" then
+    StrLeft=""
+    exit function
+  end if
+  Str=Replace(Replace(Replace(Replace(Str,"&nbsp;"," "),"&quot;",Chr(34)),"&gt;",">"),"&lt;","<")
+  L=Len(Str)
+  T=0
+  for i=1 to L
+    C=Abs(AscW(Mid(Str,i,1)))
+    if C>255 then
+      T=T+2
+    else
+      T=T+1
+    end if
+    if T>=StrLen then
+      StrLeft=Left(Str,i) & "…"
+      exit for
+    else
+      StrLeft=Str
+    end if
+  next
+  StrLeft=Replace(Replace(Replace(replace(StrLeft," ","&nbsp;"),Chr(34),"&quot;"),">","&gt;"),"<","&lt;")
+end function
+
+function StrReplace(Str)
+  if Str="" or isnull(Str) then
+    StrReplace=""
+    exit function
+  else
+    StrReplace=replace(str," ","&nbsp;")
+    StrReplace=replace(StrReplace,chr(13),"&lt;br&gt;")
+    StrReplace=replace(StrReplace,"<","&lt;")
+    StrReplace=replace(StrReplace,">","&gt;")
+  end if
+end function
+
+function ReStrReplace(Str)
+  if Str="" or isnull(Str) then
+    ReStrReplace=""
+    exit function
+  else
+    ReStrReplace=replace(Str,"&nbsp;"," ")
+    ReStrReplace=replace(ReStrReplace,"<br>",chr(13))
+    ReStrReplace=replace(ReStrReplace,"&lt;br&gt;",chr(13))
+    ReStrReplace=replace(ReStrReplace,"&lt;","<")
+    ReStrReplace=replace(ReStrReplace,"&gt;",">")
+  end if
+end function
+
+function HtmlStrReplace(Str)
+  if Str="" or isnull(Str) then
+    HtmlStrReplace=""
+    exit function
+  else
+    HtmlStrReplace=replace(Str,"&lt;br&gt;","<br>")
+  end if
+end function
+
+function ViewNoRight(GroupID,Exclusive)
+  dim rs,sql,GroupLevel
+  set rs = server.createobject("adodb.recordset")
+  sql="select GroupLevel from ChinaQJ_MemGroup where GroupID='"&GroupID&"'"
+  rs.open sql,conn,1,1
+  GroupLevel=rs("GroupLevel")
+  rs.close
+  set rs=nothing
+  ViewNoRight=true
+  if session("GroupLevel")="" then session("GroupLevel")=0
+  select case Exclusive
+    case ">="
+      if not session("GroupLevel") >= GroupLevel then
+        ViewNoRight=false
+      end if
+    case "="
+      if not session("GroupLevel") = GroupLevel then
+        ViewNoRight=false
+      end if
+  end select
+end function
+
+Function GetUrl()
+  GetUrl="http://"&Request.ServerVariables("SERVER_NAME")&Request.ServerVariables("URL")
+  If Request.ServerVariables("QUERY_STRING")<>"" Then GetURL=GetUrl&"?"& Request.ServerVariables("QUERY_STRING")
+End Function
+
+function HtmlSmallPic(GroupID,PicPath,Exclusive)
+  dim rs,sql,GroupLevel
+  set rs = server.createobject("adodb.recordset")
+  sql="select GroupLevel from ChinaQJ_MemGroup where GroupID='"&GroupID&"'"
+  rs.open sql,conn,1,1
+  GroupLevel=rs("GroupLevel")
+  rs.close
+  set rs=nothing
+  HtmlSmallPic=PicPath
+  if session("GroupLevel")="" then session("GroupLevel")=0
+  select case Exclusive
+    case ">="
+      if not session("GroupLevel") >= GroupLevel then HtmlSmallPic="Images/NoRight.jpg"
+    case "="
+      if not session("GroupLevel") = GroupLevel then HtmlSmallPic="Images/NoRight.jpg"
+  end select
+  if HtmlSmallPic="" or isnull(HtmlSmallPic) then HtmlSmallPic="Images/NoPicture.jpg"
+end function
+
+function IsValidMemName(memname)
+  dim i, c
+  IsValidMemName = true
+  if not (3<=len(memname) and len(memname)<=16) then
+    IsValidMemName = false
+    exit function
+  end if
+  for i = 1 to Len(memname)
+    c = Mid(memname, i, 1)
+    if InStr("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-", c) <= 0 and not IsNumeric(c) then
+      IsValidMemName = false
+      exit function
+    end if
+  next
+end function
+
+function IsValidEmail(email)
+  dim names, name, i, c
+  IsValidEmail = true
+  names = Split(email, "@")
+  if UBound(names) <> 1 then
+    IsValidEmail = false
+    exit function
+  end if
+  for each name in names
+    if Len(name) <= 0 then
+      IsValidEmail = false
+      exit function
+    end if
+    for i = 1 to Len(name)
+      c = Mid(name, i, 1)
+      if InStr("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-.", c) <= 0 and not IsNumeric(c) then
+        IsValidEmail = false
+        exit function
+      end if
+    next
+    if Left(name, 1) = "." or Right(name, 1) = "." then
+      IsValidEmail = false
+      exit function
+    end if
+  next
+  if InStr(names(1), ".") <= 0 then
+    IsValidEmail = false
+    exit function
+  end if
+  i = Len(names(1)) - InStrRev(names(1), ".")
+  if i <> 2 and i <> 3 then
+    IsValidEmail = false
+    exit function
+  end if
+  if InStr(email, "..") > 0 then
+    IsValidEmail = false
+  end if
+end function
+
+Function FormatDate(DateAndTime, Format)
+  On Error Resume Next
+  Dim yy,y, m, d, h, mi, s, strDateTime
+  FormatDate = DateAndTime
+  If Not IsNumeric(Format) Then Exit Function
+  If Not IsDate(DateAndTime) Then Exit Function
+  yy = CStr(Year(DateAndTime))
+  y = Mid(CStr(Year(DateAndTime)),3)
+  m = CStr(Month(DateAndTime))
+  If Len(m) = 1 Then m = "0" & m
+  d = CStr(Day(DateAndTime))
+  If Len(d) = 1 Then d = "0" & d
+  h = CStr(Hour(DateAndTime))
+  If Len(h) = 1 Then h = "0" & h
+  mi = CStr(Minute(DateAndTime))
+  If Len(mi) = 1 Then mi = "0" & mi
+  s = CStr(Second(DateAndTime))
+  If Len(s) = 1 Then s = "0" & s
+  Select Case Format
+  Case "1"
+    strDateTime = y & "-" & m & "-" & d & " " & h & ":" & mi & ":" & s
+  Case "2"
+    strDateTime = yy & m & d & h & mi & s
+  Case "3"
+    strDateTime = yy & m & d & h & mi
+  Case "4"
+    strDateTime = yy & "年" & m & "月" & d & "日"
+  Case "5"
+    strDateTime = m & "-" & d
+  Case "6"
+    strDateTime = m & "/" & d
+  Case "7"
+    strDateTime = m & "月" & d & "日"
+  Case "8"
+    strDateTime = y & "年" & m & "月"
+  Case "9"
+    strDateTime = y & "-" & m
+  Case "10"
+    strDateTime = y & "/" & m
+  Case "11"
+    strDateTime = y & "-" & m & "-" & d
+  Case "12"
+    strDateTime = y & "/" & m & "/" & d
+  Case "13"
+    strDateTime = yy & "." & m & "." & d
+  Case "14"
+    strDateTime = yy & "/" & m & "/" & d
+  Case "15"
+    strDateTime = yy & "-" & m & "-" & d
+  Case Else
+    strDateTime = DateAndTime
+  End Select
+  FormatDate = strDateTime
+End Function
+
+function WriteMsg(Message)
+  response.write "<script language=""JavaScript"">alert('WriteMsg:"&Message&"');" & "history.back()" & "</script>"
+end function
+
+Public Language,TotalLang,Language_File,Language_FrontName,StylePath,ChinaQJPagePath,Language_Ico,Default_Index
+Language = LCase(Split(request.servervariables("url"),"/")(UBound(Split(request.servervariables("url"),"/"))-1))
+
+ChinaQJPagePath=SysRootDir&Language&"/"
+'If Language = MainLanguageFolder Then
+'Language = Replace(Language,Language,"Ch")
+'Else
+'Language = Replace(Language,Language,"En")
+'End If
+sql="select * from ChinaQJ_Language where ChinaQJ_Language_State order by ChinaQJ_Language_Order"
+set rs=server.createobject("adodb.recordset")
+rs.open sql,conn,1,1
+TotalLang=rs.recordcount-1
+while(not rs.eof)
+if Language_File="" and Language_FrontName="" then
+Language_File=rs("ChinaQJ_Language_File")
+Language_FrontName=rs("ChinaQJ_Language_FrontName")
+Language_Ico=rs("ChinaQJ_Language_Ico") 
+else
+Language_File=Language_File&","&rs("ChinaQJ_Language_File")
+Language_FrontName=Language_FrontName&","&rs("ChinaQJ_Language_FrontName")
+Language_Ico=Language_Ico&","&rs("ChinaQJ_Language_Ico") 
+end if
+rs.movenext
+wend
+rs.close
+set rs=nothing
+
+Language_File=Split(Language_File,",")
+Language_FrontName=Split(Language_FrontName,",")
+Language_Ico=Split(Language_Ico,",")
+
+sql="select ChinaQJ_Language_File from ChinaQJ_Language where ChinaQJ_Language_Index"
+set rs=server.createobject("adodb.recordset")
+rs.open sql,conn,1,1
+if rs.bof and rs.eof then
+Default_Index=conn.execute("select ChinaQJ_Language_File from ChinaQJ_Language where ChinaQJ_Language_State order by id")("ChinaQJ_Language_File")
+else
+Default_Index=rs(0)
+end if
+rs.close
+set rs=nothing
+
+StylePath="../Templates/Skin02/"
+
+Public SiteTitle,ComName,Address,SiteUrl,ZipCode,Telephone,Fax,Email,Keywords,Descriptions,IcpNumber,Video,MesViewFlag,SiteLogo,SiteDetail,SiteDetailPic
+Public SiteTitleCh,SiteTitleEn,ComNameCh,ComNameEn,AddressCh,AddressEn,Telephone2
+Public KeywordsCh,DescriptionsCh,KeywordsEn,DescriptionsEn
+Public SiteDetailCh,SiteDetailEn
+Public ViewFlag,ChinaQJPubChar,ChinaQJ_Stat,IndexView
+Public VideoCh,VideoEn
+Public PageBanner,PageBannerType,PageBannerWidth,PageBannerHeight
+Public PageBannerCh,PageBannerTypeCh,PageBannerWidthCh,PageBannerHeightCh
+Public PageBannerEn,PageBannerTypeEn,PageBannerWidthEn,PageBannerHeightEn
+Public SiteIndexNotice,SiteIndexNoticeCh,SiteIndexNoticeEn,Longitude,Latitude,Proportion,GoogleMapKey,GoogleMapType,GoogleMapHtml
+Public UserRegisterPurview,UserRegisterPurviewDis,UserCartPurview,UserCartPurviewDis,RecruitmentPurview,RecruitmentPurviewDis,MessageFormPurview,MessageFormPurviewDis
+Sub SiteInfo()
+    Dim rs,sql
+    Set rs = server.createobject("adodb.recordset")
+    sql="select top 1 * from ChinaQJ_Site"
+    rs.open sql,conn,1,1
+    SiteTitle=rs("SiteTitle"&Language)
+    Keywords=rs("Keywords"&Language)
+    Descriptions=rs("Descriptions"&Language)
+    SiteUrl=rs("SiteUrl")
+    ComName=rs("ComName"&Language)
+    Address=rs("Address"&Language)
+    ZipCode=rs("ZipCode")
+    Telephone=rs("Telephone")
+    Telephone2=rs("Telephone2")
+    Fax=rs("Fax")
+    Email=rs("Email")
+    IcpNumber=rs("IcpNumber")
+    MesViewFlag=rs("MesViewFlag")
+    SiteLogo=rs("SiteLogo")
+    SiteDetailPic=rs("SiteDetailPic")
+    SiteDetail=rs("SiteDetail"&Language)
+    ChinaQJ_Stat=rs("ChinaQJ_Stat")
+    Video=rs("Video"&Language)
+    PageBanner=rs("PageBanner"&Language)
+    PageBannerType=rs("PageBannerType"&Language)
+    PageBannerWidth=rs("PageBannerWidth"&Language)
+    PageBannerHeight=rs("PageBannerHeight"&Language)
+    SiteIndexNotice=rs("SiteIndexNotice"&Language)
+    Longitude=rs("Longitude")
+    Latitude=rs("Latitude")
+    Proportion=rs("Proportion")
+    GoogleMapKey=rs("GoogleMapKey")
+    GoogleMapType=rs("GoogleMapType")
+    GoogleMapHtml=rs("GoogleMapHtml")
+    rs.close
+    Set rs=Nothing
+    If IsDatabaseType = 1 Then
+        ViewFlag = "ViewFlag"&Language&" = 1"
+        IndexView = "IndexView"&Language&" = 1"
+    Else
+        ViewFlag = "ViewFlag"&Language&""
+        IndexView = "IndexView"&Language&""
+    End If
+End Sub
+
+Sub FormCheckdata()
+set rs = server.createobject("adodb.recordset")
+sql="select * from ChinaQJ_Formcheck where ID=1"
+rs.open sql,conn,1,1
+UserRegisterPurview=rs("UserRegisterPurview")
+UserRegisterPurviewDis=rs("UserRegisterPurviewDis")
+UserCartPurview=rs("UserCartPurview")
+UserCartPurviewDis=rs("UserCartPurviewDis")
+RecruitmentPurview=rs("RecruitmentPurview")
+RecruitmentPurviewDis=rs("RecruitmentPurviewDis")
+MessageFormPurview=rs("MessageFormPurview")
+MessageFormPurviewDis=rs("MessageFormPurviewDis")
+rs.close
+set rs=nothing
+End Sub
+
+Sub SiteInfoCom()
+  Dim rs,sql
+  Set rs = server.createobject("adodb.recordset")
+  sql="select top 1 * from ChinaQJ_Site"
+  rs.open sql,conn,1,1
+  Email=rs("Email")
+  rs.close
+  Set rs=Nothing
+End Sub
+
+Sub SendEmail(MailTo,Subject,HtmlCode,SendMode)
+    If SendMode="" Then SendMode="Jmail"
+    If SendMode="Jmail" Then
+      Jmail MailTo,Subject,HtmlCode
+    End If
+End Sub
+
+Sub Jmail(EMail,Topic,MailBody)
+    On Error Resume Next
+    Dim JMail
+    Set JMail = Server.CreateObject("JMail.Message")
+    JMail.silent = True
+    JMail.Logging = True
+    JMail.Charset = "gb2312"
+    If Not(JMailUser = "" Or JMailPass = "") Then
+      JMail.MailServerUserName = JMailUser
+      JMail.MailServerPassword = JMailPass
+    End If
+    JMail.ContentType = "text/html"
+    JMail.Priority = 1
+    JMail.From = JMailOutFrom
+    JMail.FromName = JMailName
+    JMail.AddRecipient EMail
+    JMail.Subject = Topic
+    JMail.Body = MailBody
+    JMail.Send (JMailSMTP)
+    Set JMail = Nothing
+    SendMail = "成功！"
+    If Err Then SendMail = "错误！"
+End Sub
+
+Function CheckStr(Strer,Num)
+    Dim Shield,w
+    If Strer = "" Or IsNull(Strer) Then Exit Function
+    Select Case Num
+      Case 1
+        If IsNumeric(Strer) = 0 Then
+          Response.Write ChinaQJChLanguage2
+          Response.End
+        End If
+        Strer = Int(Strer)
+    End Select
+    CheckStr = Strer
+End Function
+
+Function Checkfile(Filepath)
+	Dim Fso,Path
+	Set Fso = Server.Createobject("Scripting.Filesystemobject")
+	If Instr(Filepath, ":") <> 0 Then Path = Filepath Else Path = Server.Mappath(Filepath)
+	If Fso.Fileexists(Path) Then Checkfile = True Else Checkfile = False
+	Set Fso = Nothing
+End Function
+
+Function ReadText(Fileurl,Charset)
+	Dim Str
+	Set Stm = Server.Createobject("Adodb.Stream")
+	Stm.Type = 2
+	Stm.Mode = 3
+	Stm.Charset = Charset
+	Stm.Open
+	Stm.Loadfromfile Fileurl
+	Str = Stm.Readtext
+	Stm.Close
+	Set Stm = Nothing
+	ReadText = Str
+End Function
+
+Function getEnglish(Str)
+    getEnglish = Str
+    'If getEnglishState = 1 Then
+        getEnglish = Replace(getEnglish, "中国", " china ")
+        getEnglish = Replace(getEnglish, "策划", " plan ")
+        getEnglish = Replace(getEnglish, "免费", " free ")
+        getEnglish = Replace(getEnglish, "介绍", " intro ")
+        getEnglish = Replace(getEnglish, "技巧", " skill ")
+        getEnglish = Replace(getEnglish, "生活", " life ")
+        getEnglish = Replace(getEnglish, "活动", " activity ")
+        getEnglish = Replace(getEnglish, "工具", " tool ")
+        getEnglish = Replace(getEnglish, "联盟", " union ")
+        getEnglish = Replace(getEnglish, "注册", " register ")
+        getEnglish = Replace(getEnglish, "经验", " experience ")
+        getEnglish = Replace(getEnglish, "翻译", " translate ")
+        getEnglish = Replace(getEnglish, "项目", " item ")
+        getEnglish = Replace(getEnglish, "网站", " web-site ")
+        getEnglish = Replace(getEnglish, "英语", " english ")
+        getEnglish = Replace(getEnglish, "英文", " english ")
+        getEnglish = Replace(getEnglish, "雅虎", " yahoo ")
+        getEnglish = Replace(getEnglish, "新浪", " sina ")
+        getEnglish = Replace(getEnglish, "支付宝", " alipay ")
+        getEnglish = Replace(getEnglish, "交易", " trade ")
+        getEnglish = Replace(getEnglish, "网店", " b2c ")
+        getEnglish = Replace(getEnglish, "升级", " update ")
+        getEnglish = Replace(getEnglish, "杂志", " magazine ")
+        getEnglish = Replace(getEnglish, "空间", " space ")
+        getEnglish = Replace(getEnglish, "爱情", " love ")
+        getEnglish = Replace(getEnglish, "朋友", " friend ")
+        getEnglish = Replace(getEnglish, "友情", " friend ")
+        getEnglish = Replace(getEnglish, "链接", " like ")
+        getEnglish = Replace(getEnglish, "标签", " label ")
+        getEnglish = Replace(getEnglish, "运行", " running ")
+        getEnglish = Replace(getEnglish, "管理", " manager ")
+        getEnglish = Replace(getEnglish, "管理", " manage ")
+        getEnglish = Replace(getEnglish, "页面", " page ")
+        getEnglish = Replace(getEnglish, "模板", " template ")
+        getEnglish = Replace(getEnglish, "游戏", " game ")
+        getEnglish = Replace(getEnglish, "论坛", " forum ")
+        getEnglish = Replace(getEnglish, "新闻", " news ")
+        getEnglish = Replace(getEnglish, "音乐", " music ")
+        getEnglish = Replace(getEnglish, "帮助", " help ")
+        getEnglish = Replace(getEnglish, "优化", " optimize ")
+        getEnglish = Replace(getEnglish, "软件", " soft ")
+        getEnglish = Replace(getEnglish, "教程", " tech ")
+        getEnglish = Replace(getEnglish, "下载", " download ")
+        getEnglish = Replace(getEnglish, "搜索", " search ")
+        getEnglish = Replace(getEnglish, "引擎", " engine ")
+        getEnglish = Replace(getEnglish, "蜘蛛", " spider ")
+        getEnglish = Replace(getEnglish, "日志", " log ")
+        getEnglish = Replace(getEnglish, "博客", " blog ")
+        getEnglish = Replace(getEnglish, "百度", " baidu ")
+        getEnglish = Replace(getEnglish, "谷歌", " google ")
+        getEnglish = Replace(getEnglish, "邮箱", " mailbox ")
+        getEnglish = Replace(getEnglish, "邮件", " mail ")
+        getEnglish = Replace(getEnglish, "域名", " domain ")
+        getEnglish = Replace(getEnglish, "测试", " test")
+        getEnglish = Replace(getEnglish, "演示", " demo ")
+        getEnglish = Replace(getEnglish, "音乐", " music ")
+        getEnglish = Replace(getEnglish, "笑话", " joke ")
+        getEnglish = Replace(getEnglish, "产品", " product ")
+        getEnglish = Replace(getEnglish, "留言", " message ")
+        getEnglish = Replace(getEnglish, "反馈", " freedback ")
+        getEnglish = Replace(getEnglish, "评论", " comment ")
+        getEnglish = Replace(getEnglish, "推荐", " commend ")
+        getEnglish = Replace(getEnglish, "共享", " share ")
+        getEnglish = Replace(getEnglish, "资源", " resource ")
+        getEnglish = Replace(getEnglish, "插件", " plugins ")
+        getEnglish = Replace(getEnglish, "本本", " notebook ")
+        getEnglish = Replace(getEnglish, "电脑", " computer ")
+        getEnglish = Replace(getEnglish, "系统", " system ")
+        getEnglish = Replace(getEnglish, "学校", " school ")
+        getEnglish = Replace(getEnglish, "工作", " job ")
+        getEnglish = Replace(getEnglish, "信息", " info ")
+        getEnglish = Replace(getEnglish, "娱乐", " ent ")
+        getEnglish = Replace(getEnglish, "汽车", " car ")
+        getEnglish = Replace(getEnglish, "手机", " mobile ")
+        getEnglish = Replace(getEnglish, "网络", " network ")
+        getEnglish = Replace(getEnglish, "老板", " boss ")
+        getEnglish = Replace(getEnglish, "狗", " dog ")
+        getEnglish = Replace(getEnglish, "电视", " tv ")
+        getEnglish = Replace(getEnglish, "电影", " movie ")
+    'End If
+End Function
+
+function pinyin(chinese)
+	chinese = replace(chinese, "/", ""): chinese = replace(chinese, "\", "")
+	chinese = replace(chinese, "*", ""): chinese = replace(chinese, "]", "")
+	chinese = replace(chinese, "[", ""): chinese = replace(chinese, "}", "")
+	chinese = replace(chinese, "{", ""): chinese = replace(chinese, "'", "")
+	chinese = getEnglish(chinese)
+	dim pinyinstr, istr, iIsCn, IsCn
+	dim pinyinconn, rs, i, x
+	on error resume next
+	set pinyinconn = server.createobject("Adodb.connection")
+	pinyinconn.open "Provider=Microsoft.Jet.OLEdb.4.0;Data Source=" & server.mappath("pinyin.asp")
+	if err then pinyin = "": set pinyinconn = nothing: exit function
+	IsCn = true
+	for i = 1 to len(chinese)
+	iIsCn = IsCn '获取上次是不是中文的值
+	istr = Mid(chinese, i, 1)
+	x = Asc(istr)
+	if (x >= 65 and x <= 90) or (x >= 97 and x <= 122) or (x >= 48 and x <= 57) or istr = " " then
+		IsCn = False '这些是英文、数字(保留字符)
+		if istr = " " then istr = "-"
+	else
+		set rs = pinyinconn.execute("select top 1 pinyin From pinyin where content like '%" & istr & "%';")
+		if not rs.eof then
+		'istr = lcase(rs(0)): IsCn = True '小写
+		istr = rs(0): IsCn = True '首字母大写
+		else
+		IsCn = false
+		if istr = " " then istr = "-" else istr = "" '将空格转换成"－"
+		end if
+		rs.close: set rs = nothing
+	end if
+	if iIsCn = IsCn then pinyinstr = pinyinstr & istr else pinyinstr = pinyinstr & "-" & istr
+	pinyinstr = replace(pinyinstr, "--", "-")
+	pinyinstr = replace(pinyinstr, "__", "_")
+	next
+	if right(pinyinstr, 1) = "-" then pinyinstr = left(pinyinstr, len(pinyinstr) - 1)
+	if right(pinyinstr, 1) = "_" then pinyinstr = left(pinyinstr, len(pinyinstr) - 1)
+	if left(pinyinstr, 1) = "-" then pinyinstr = right(pinyinstr, len(pinyinstr) - 1)
+	if left(pinyinstr, 1) = "_" then pinyinstr = right(pinyinstr, len(pinyinstr) - 1)
+	pinyinconn.close
+	set pinyinconn = nothing
+	pinyin = trim(pinyinstr)
+end function
+
+'***********************************************
+'函数名：JoinChar
+'作  用：向地址中加入 ? 或 &
+'参  数：strUrl  ----网址
+'返回值：加了 ? 或 & 的网址
+'***********************************************
+function JoinChar(strUrl)
+	if strUrl="" then
+		JoinChar=""
+		exit function
+	end if
+	if InStr(strUrl,"?")<len(strUrl) then 
+		if InStr(strUrl,"?")>1 then
+			if InStr(strUrl,"&")<len(strUrl) then 
+				JoinChar=strUrl & "&"
+			else
+				JoinChar=strUrl
+			end if
+		else
+			JoinChar=strUrl & "?"
+		end if
+	else
+		JoinChar=strUrl
+	end if
+end function
+
+'***********************************************
+'过程名：showpage
+'作  用：显示“上一页 下一页”等信息
+'参  数：sfilename  ----链接地址
+'       totalnumber ----总数量
+'       maxperpage  ----每页数量
+'       ShowTotal   ----是否显示总数量
+'       ShowAllPages ---是否用下拉列表显示所有页面以供跳转。有某些页面不能使用，否则会出现JS错误。
+'       strUnit     ----计数单位
+'***********************************************
+sub showpage(sfilename,totalnumber,maxperpage,ShowTotal,ShowAllPages,strUnit)
+	dim n, i,strTemp,strUrl
+	if totalnumber mod maxperpage=0 then
+    	n= totalnumber \ maxperpage
+  	else
+    	n= totalnumber \ maxperpage+1
+  	end if
+  	strTemp= "<table align='center'><tr><td>"
+	strTemp=strTemp & "共 <b>" & totalnumber & "</b></font> " & strUnit & "&nbsp;&nbsp;&nbsp;"
+	strUrl=JoinChar(sfilename)
+  	if CurrentPage<2 then
+    		strTemp=strTemp & "首页 上一页&nbsp;"
+  	else
+    		strTemp=strTemp & "<a href='" & strUrl & "page=1'>首页</a>&nbsp;"
+    		strTemp=strTemp & "<a href='" & strUrl & "page=" & (CurrentPage-1) & "'>上一页</a>&nbsp;"
+  	end if
+
+  	if n-currentpage<1 then
+    		strTemp=strTemp & "下一页 尾页"
+  	else
+    		strTemp=strTemp & "<a href='" & strUrl & "page=" & (CurrentPage+1) & "'>下一页</a>&nbsp;"
+    		strTemp=strTemp & "<a href='" & strUrl & "page=" & n & "'>尾页</a>"
+  	end if
+   	strTemp=strTemp & "&nbsp;页次：<strong><font color=red>" & CurrentPage & "</font>/" & n & "</strong>页 "
+    strTemp=strTemp & "&nbsp;<b>" & maxperpage & "</b>" & strUnit & "/页"
+	if ShowAllPages=True then
+		strTemp=strTemp & "&nbsp;转到第<input type='text' name='pageshow' size='2' maxlength='5' value='1' onKeyPress=""if(event.keyCode==13) window.location='Admin_Count.Asp?action=all&pageshow='+this.value;"" onBlur=""window.location='Admin_Count.Asp?action=all&pageshow='+this.value;"">页 <input name="""" type=""button"" value=""转到"" />"
+	end if
+	strTemp=strTemp & "</td></tr></table>"
+	response.write strTemp
+end sub
+
+''============================
+''涵数名：CheckTable                          =
+''参　数：myTable 要判断的表               =
+''作　用：判断数据库中是否存在指定的表 =
+''============================
+Function CheckTable (myTable)
+'列出数据库中的所有表
+dim rs,getTableName
+set rs=conn1.openSchema(20) 
+rs.movefirst 
+do Until rs.EOF 
+if rs("TABLE_TYPE")="TABLE" then 
+   'response.write rs("TABLE_NAME") & ","
+   getTableName=getTableName+rs("TABLE_NAME")&","
+end if 
+rs.movenext
+loop
+rs.close
+set rs=nothing
+
+
+'判断数据库中是否存在此表（下面两行代码使待比较表和指定表前后都加上豆号，以精确比较）
+dim getTableName2,myTable2
+getTableName2=","&getTableName '此字符串后面已经有豆号
+myTable2=","&myTable&","
+If instr(getTableName2,myTable2)<>0 Then
+   CheckTable=1 '存在
+else
+   CheckTable=0 '不存在
+end if
+
+End Function
+
+
+''============================
+''涵数名：CheckFields                         =
+''参　数：myTable 要判断的表               =
+''参　数：myFields 要判断的字段           =
+''作　用：判断表中是否存在指定的字段     =
+''============================
+Function CheckFields (myTable,myFields)
+
+'如果表存在继续执行，否则跳过
+if CheckTable (myTable)=1 then
+   dim rs,i,getFieldsName
+   '列出表中的所有字段
+   set rs=conn1.execute("select * from "&myTable&"")
+   for i=0   to rs.fields.count-1   
+    'response.write (rs.fields(i).name & ",")
+    getFieldsName=getFieldsName+rs.fields(i).name & ","
+   next
+   rs.close
+   set rs=nothing
+   'response.write(getFieldsName)
+end if
+
+'判断表中是否存在此字段（下面两行代码使待比较字段和指定字段前后都加上豆号，以精确比较）
+dim getFieldsName2,myFields2
+getFieldsName2=","&getFieldsName '此字符串后面已经有豆号
+myFields2=","&myFields&","
+if instr(getFieldsName2,myFields2)<>0 Then
+   CheckFields=1 '存在
+else
+   CheckFields=0 '不存在
+end if
+End function
+
+Function Rnd_ClickNumber(Min,Max)
+Randomize
+Rnd_ClickNumber = CInt((Max-Min+1)*Rnd()+Min)
+End Function
+
+'====================================================================================================================
+'
+'	My Add New Function				Start...
+'
+'====================================================================================================================
+
+'============================
+'	记录日志函数(Beta)	[1]
+'	FileCOn		日志内容
+'==============================
+Function MyLog(FileCon)
+	On Error Resume Next	'-----------Error
+	Dim FilePath,FileName
+	FilePath = Request.ServerVariables("APPL_PHYSICAL_PATH") & "log\" & year(now()) & "\" & month(now()) & "\" & day(now()) & "\"
+	Call MyLog_DIY(FilePath,"MyLog.TxT",FileCon)
+	If Err.Number<>0 Then
+		Err.Clear
+	End If
+End Function
+
+'============================
+'	记录日志函数(Beta)	[2]
+'	FileName	文件名
+'	FileCOn		日志内容
+'==============================
+Function MyLog_(FileName,FileCon)
+	On Error Resume Next	'-----------Error
+	Dim FilePath
+	FilePath = Request.ServerVariables("APPL_PHYSICAL_PATH") & "log\" & year(now()) & "\" & month(now()) & "\" & day(now()) & "\"
+	Call MyLog_DIY(FilePath,FileName,FileCon)
+	If Err.Number<>0 Then
+		Err.Clear
+	End If
+End Function
+
+'======================================
+'	记录日志函数(Beta)	[3]
+'	FilePath	保存文件路径
+'	FileName	保存文件名称
+'	FileCon		文件内容
+'=======================================
+Function MyLog_DIY(FilePath,FileName,FileCon)
+	On Error Resume Next	'-----------Error
+	BetaVerifyFolder(FilePath)
+	Dim Fs,Fname
+	Set Fs = Server.CreateObject("Scripting.FileSystemObject")
+	If Fs.FileExists(FilePath&FileName) = false Then 
+		Set Fname = Fs.CreateTextFile(FilePath&FileName,true)
+	Else
+		Set Fname = Fs.OpenTextFile(FilePath&FileName,8,true)
+	End If
+	Fname.WriteLine("=================================================================================================================")
+	Fname.WriteLine("["&GetUserOSInfo()&"]["&GetUserBrowserInfo()&"]["&GetUserTrueIP()&"]---------------------"&now()&"--------------")
+	Fname.WriteLine("*************************************************************************************************")
+	Fname.WriteLine("")
+	Fname.WriteLine("    "&FileCon)
+	Fname.WriteLine("")
+	Fname.WriteLine("*************************************************************************************************")
+	Fname.WriteLine("=================================================================================================================")
+	Fname.WriteLine("")
+	'Response.write(FileCon)
+	'Response.end
+	Fname.Close
+	Set Fname=Nothing
+	Set Fs = Nothing
+	If Err.Number<>0 Then
+		Err.Clear
+	End If
+End Function
+
+'======================================================
+'	测试函数 验证目录是否存在,如果不存在则创建
+'	StrPath		目录名称
+'	无返回
+'===================================================
+Function BetaVerifyFolder(StrPath)
+	On Error Resume Next	'-----------Error
+	Dim Fs
+	Set Fs = Server.CreateObject("Scripting.FileSystemObject")
+	If Fs.FolderExists(StrPath) = false Then
+		Dim tempPath
+		Dim folderAry
+			folderAry = Split(StrPath, "\")
+		For i=0 to UBound(folderAry)-1
+			If folderAry(i)<>"" Then
+				If tempPath = "" Then 
+					tempPath = folderAry(i)
+				Else
+					tempPath = tempPath&"\"&folderAry(i)
+				End If
+				If Fs.FolderExists(tempPath) = false Then
+					Fs.CreateFolder(tempPath)
+					'Response.write("Cl -> ")
+				End If
+				'Response.write(folderAry(i)&" -> Hello  -> "&tempPath&"<br />")
+			End If
+		Next
+		'Response.write(StrPath)
+		'Response.end
+		'Fs.CreateFolder(StrPath)
+	End If
+	Set Fs = Nothing
+	If Err.Number<>0 Then
+		Err.Clear
+	End If
+End Function
+
+'=================================================
+'	记录错误信息函数(Beta)
+'	FunName		函数名称
+'	obj			参数[1]
+'	objval		参数值[1]
+'================================================
+Function LogError(FunName,obj,objval)
+	if Err.Number<>0 Then
+		Call MyLog_("ErrorLog.TxT","函数 "&FunName&" 执行错误: ["&Err.Number&"]  "&Err.Description&" ["&Err.Source&"] ")	'LOG
+		obj = objval					'...
+		Err.Clear						'	clear error
+	end If
+End Function
+
+'=================================================
+'	记录错误信息函数(Beta)[page]
+'	PageName	页面名称
+'================================================
+Function LogPageError(PageName)
+	if Err.Number<>0 Then
+		Call MyLog_("PageErrorLog.TxT","页面 "&PageName&" 出现错误: ["&Err.Number&"]  "&Err.Description&" ["&Err.Source&"] ")	'LOG
+		Err.Clear						'	clear error
+	end If
+End Function
+
+'====================================================
+'	清除错误函数(Beta)
+'===================================================
+Function cError()
+	If Err.Number<>0 Then
+		Err.Clear			'	clear error
+	End If
+End Function
+
+LogPageError("Function页面")			'--log error
+
+%>

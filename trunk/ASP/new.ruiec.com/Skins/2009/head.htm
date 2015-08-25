@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>{sdcms:class_title_site} - {sdcms:webname}</title>
+<meta content="{sdcms:webkey}" name="keywords">
+<meta content="{sdcms:webdec}" name="description">
+<link rel="shortcut icon" href="{sdcms:root}favicon.ico" type="image/x-icon" />
+<script src="{sdcms:skin}js/jquery.min.js" language="javascript"></script>
+<script src="{sdcms:root}skins/2009/js/jquery.shadow.js" type="text/javascript"></script>
+<script src="{sdcms:root}skins/2009/js/jquery.ifixpng.js" type="text/javascript"></script> 
+<script src="{sdcms:root}skins/2009/js/jquery.fancyzoom.js" type="text/javascript"></script>
+<script src="{sdcms:root}skins/2009/js/easySlider1.5.js" type="text/javascript"></script>
+<script>var webdir="{sdcms:root}";</script>
+<script src="{sdcms:root}skins/2009/js/obj.js" type="text/javascript"></script>
+<script src="{sdcms:root}skins/2009/js/scrollNav.js" type="text/javascript"></script>
+<link href="{sdcms:skin}css/style.css" type="text/css" rel="stylesheet">
+<link type="text/css" rel="stylesheet" href="data:text/css,">
+<!--[if IE 6]>
+	<script src="{sdcms:root}skins/2009/js/browser.js?IE6" type="text/javascript"></script>
+	<script src="{sdcms:root}skins/2009/js/DD_belatedPNG.min.js" type="text/javascript"></script>
+	<script type="text/javascript">DD_belatedPNG.fix("img, div, a, h3, background,.top");</script>
+<![endif]-->
+<!--[if IE 7]>
+	<script src="{sdcms:root}skins/2009/js/browser.js?IE7" type="text/javascript"></script>
+<![endif]-->
+</head>
+<body>
+<div id="header">
+  <div id="header_top">
+	<div class="logo">
+	  <div id="logo"><a href="{sdcms:weburl}" target="_blank" title="{sdcms:webname}"><img src="{sdcms_logo}" alt="{sdcms:webname}" /></a></div>
+	  <div id="logother">
+		<div id="top_other">
+			<a href="{sdcms:root}plug/rss/" target="_blank">RSS订阅</a>　|　<a href="{sdcms:root}plug/publish/">匿名投稿</a>
+			<form id="mysearchFM" method="post" action="{sdcms:weburl}/search/Index.asp" target="_blank">
+				<input name="key" id="so_key" type="text" class="input" placeholder="请输入关键字" />
+				<input type="submit" onclick="return checksearch();" class="bnt" value="搜 索" />
+			</form>
+		</div>
+	  </div>
+	</div>
+	<div class="nav">
+	  <ul id="nav">
+		<li><a href="{sdcms:weburl}" {iif "{sdcms:class_title}"="首页"}id="nav_show"{/iif} target="_blank" title="首页">首页</a></li>
+		{sdcms:loop top="10" field="id,title,ClassUrl" table="sd_class" where="followid=0" order="ordnum,id"}
+		<li><a href="{link}" [if "{sdcms:nav_title}"="{title}"]id="nav_show"[end if] target="_blank" title="{title}">{title}</a></li>
+		{/sdcms:loop}
+	  </ul>
+	  <span class="call" title="联系中瑞传媒">全国服务热线：0755-33581131 </span>
+	</div>
+	{iif ("{sdcms:class_title}"<>"首页")}
+	<div class="topmap">
+		<h3 id="page_title" title="{sdcms:class_title}">{sdcms:class_title}<!--&nbsp;&nbsp;/&nbsp;<em>{sdcms:class_key}...</em>--></h3>
+	</div>
+	<div id="menu" class="c">
+		<div class="width" id="Positon">
+			您的位置：<a href="{sdcms:root}">网站首页</a> {sdcms:map_nav} > {sdcms:class_title}
+		</div>
+	</div>
+	{/iif}
+  </div>
+</div>
+<!--End header-->

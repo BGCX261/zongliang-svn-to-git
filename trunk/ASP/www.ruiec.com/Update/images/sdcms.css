@@ -1,0 +1,18 @@
+body{background:url(bg.gif) repeat-x top;}
+div{font-family:verdana;color:#333;font-size:14px;line-height:24px;}
+a{color:#555;text-decoration:none;}
+p{margin:0px;}
+.left{float:left;}
+.width{width:900px;margin:auto;overflow:hidden;}
+a:hover{color:#49AD08;text-decoration:none;}
+#update_img{margin-top:140px;width:500px;}
+#update_img div{margin:-50px 0 0 210px;font-size:12px;}
+#title{font-size:18px;font-weight:bold;color:#f60;margin:20px 0 0 10px;}
+.sdcms{color:#49AD08;font-weight:bold;}
+.title{font-weight:bold;color:#f60;margin-left:10px;}
+h1{font-family:verdana;font-size:16px;text-align:center;color:#f60;margin:160px 0 20px 0;width:400px;}
+.update_content{border:1px solid #FCBA72;background:#FDFAF6;padding:10px;margin:10px 0;color:#999;font-size:12px;font-family:arial;}
+.bnt{background:url(bnt.gif) no-repeat;width:66px;height:26px;border:0px;text-align:center;color:#fff;font-size:12px;}
+#load_update{background:#fff;border:1px solid #FEDCA3;margin-left:6px;width:325px;position:absolute;display:none;}
+#load_update div{background:#ff0;padding-left:1px;height:24px;font-size:12px;text-indent:12px;}
+.action{color:#f00;}

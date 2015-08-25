@@ -1,0 +1,14 @@
+User-agent: *
+Sitemap:http://www.chinaqj.com/sitemap.xml
+Sitemap:http://www.chinaqj.com/Baidu.xml
+Disallow: /Count/
+Disallow: /Include/
+Disallow: /Database/
+Disallow: /DatePicker/
+Disallow: /System/
+Disallow: /Templates/
+Disallow: /Scripts/
+Disallow: /*?*
+Allow: /Ch/MessageList.Asp
+Allow: /En/MessageList.Asp
+Allow: /Jp/MessageList.Asp

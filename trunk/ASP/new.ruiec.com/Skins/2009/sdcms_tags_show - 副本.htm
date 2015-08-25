@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title>{sdcms:tag_name} 　Powered By SDCMS</title>
+<link href="{sdcms:root}skins/2009/css/sdcms.css" rel="stylesheet" type="text/css" />
+<script>var webdir="{sdcms:root}";</script>
+<script src="{sdcms:root}editor/jquery.js" language="javascript"></script>
+<script src="{sdcms:root}skins/2009/js/sdcms.js" language="javascript"></script>
+</head>
+
+<body>
+{sdcms:include("Sdcms_Head.htm")}
+
+	<div class="width mt10">
+		<div id="left">
+			
+			<div class="border">
+				<div class="subject_bg">
+					<div class="subject_title">标签</div>
+				</div>
+				<div class="m10">
+						{@sdcms:page table="view_info" where="Tags like '%{sdcms:tag_name}%' and ispass=1" pagesize="20"}
+						{@eof}<div>抱歉，没有找到与“<span class="red">{sdcms:tag_name}</span>” 相关的标签</div>{/@eof}
+						<h1 class="list_title"><a href="{@link}" [@if {@isurl}=1]target="_blank"[@end if] {@style}>{@title}</a></h1>
+						<div class="list_jj">{@jj function="nohtml" len="200"}</div>
+						<div class="list_other">类别：<span><a href="{@classurl}">{@classname}</a></span> 作者：<span>{@author}</span> 日期：<span>{@adddate date="yyyy-mm-dd hh.ff.ss"}</span> 点击：<span>{@hits}</span> 评论：<span>{@comment_num}</span></div>
+						{/@sdcms:page}
+					<div class="List_page">{sdcms:listpage}</div>
+				</div>	
+		  </div>
+		  
+	  </div>
+		<!--Left Over-->
+		<div id="right">
+			<div class="border" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">随机标签</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+					{sdcms:loop table="sd_tags" top="10" order="rnd"}
+						{eof}<dt>没有资料</dt>{/eof}
+						<dt><a href="{link}">{title len="36"}</a></dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+			<div class="border mt10" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">热门标签</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+					{sdcms:loop table="sd_tags" top="10" order="hits desc,id desc"}
+						{eof}<dt>没有资料</dt>{/eof}
+						<dt><a href="{link}">{title len="36"}</a></dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+	  </div>
+	</div>
+	
+{sdcms:include("sdcms_foot.htm")}

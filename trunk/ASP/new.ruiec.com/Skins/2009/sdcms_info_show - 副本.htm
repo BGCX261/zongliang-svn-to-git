@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title>{sdcms:info_title} 　Powered By SDCMS</title>
+<meta name="keywords" content="{sdcms:info_keyword}" />
+<meta name="description" content="{sdcms:info_desc}" />
+<link href="{sdcms:root}skins/2009/css/sdcms.css" rel="stylesheet" type="text/css" />
+<script>var webdir="{sdcms:root}";</script>
+<script src="{sdcms:root}editor/jquery.js" language="javascript"></script>
+<script type="text/javascript" src="{sdcms:root}editor/kindeditor.js" charset="utf-8" ></script>
+<script src="{sdcms:root}skins/2009/js/sdcms.js" language="javascript"></script>
+<!--[if lt IE 7]>
+<script type="text/javascript" src="{sdcms:root}skins/2009/js/minmax.js"></script>
+<![endif]-->
+</head>
+
+<body>
+{sdcms:include("Sdcms_Head.htm")}
+<div class="width" id="Positon">
+		您的位置：<a href="{sdcms:root}">网站首页</a> {sdcms:info_position} > 正文
+	</div>
+    <!--end-->
+    <div class="width">
+    <!--left-->
+    <div id="left">
+    <div class="border">
+    <div class="subject_bg">
+					<div class="subject_title"><a href="{sdcms:info_classurl}">{sdcms:info_classname}</a></div>
+				</div>
+                	<div class="m10">
+				<h1 class="info_title" {sdcms:info_style}>{sdcms:info_title}</h1>
+				<div class="info_other">作者：{sdcms:info_author} 来源：{sdcms:info_comefrom} 日期：{sdcms:info_date} 人气：<span id="show_i_hits"><script>get_hits({sdcms:info_hits},"show_i_hits")</script></span> 标签：{sdcms:info_tags} </div>
+				<table align="center" width="588" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+				<td class="info_content">{sdcms:info_content}</td>
+				</tr>
+				</table>
+				<div style="width:620px;text-align:center;"><div class="content_page">{sdcms:info_page}</div></div>
+                
+                <div class="mtb">
+                <div class="info_mood">读完这篇文章后，您心情如何？</div>
+                <div id="Digg">
+					 <dl>
+						 <dt>
+							 <div id="digg_1">0</div>
+							 <div class="bar"><div class="bg" id="digg_num_1"></div></div>
+							 <div class="mood mood1"><a title="高兴" href="javascript:void(0)" onclick="Send_Digg({sdcms:info_id},0)"></a></div>
+						 </dt>
+						 <dt>
+							 <div id="digg_2">0</div>
+							 <div class="bar"><div class="bg" id="digg_num_2"></div></div>
+							 <div class="mood mood2"><a title="感动" href="javascript:void(0)" onclick="Send_Digg({sdcms:info_id},1)"></a></div>
+						 </dt>
+						 <dt>
+							 <div id="digg_3">0</div>
+							 <div class="bar"><div class="bg" id="digg_num_3"></div></div>
+							 <div class="mood mood3"><a title="同情" href="javascript:void(0)" onclick="Send_Digg({sdcms:info_id},2)"></a></div>
+						 </dt>
+						 <dt>
+							 <div id="digg_4">0</div>
+							 <div class="bar"><div class="bg" id="digg_num_4"></div></div>
+							 <div class="mood mood4"><a title="愤怒" href="javascript:void(0)" onclick="Send_Digg({sdcms:info_id},3)"></a></div>
+						 </dt>
+						 <dt>
+							 <div id="digg_5">0</div>
+							 <div class="bar"><div class="bg" id="digg_num_5"></div></div>
+							 <div class="mood mood5"><a title="搞笑" href="javascript:void(0)" onclick="Send_Digg({sdcms:info_id},4)"></a></div>
+						 </dt>
+						 <dt>
+							 <div id="digg_6">0</div>
+							 <div class="bar"><div class="bg" id="digg_num_6"></div></div>
+							 <div class="mood mood6"><a title="难过" href="javascript:void(0)" onclick="Send_Digg({sdcms:info_id},5)"></a></div>
+						 </dt>
+						 <dt>
+							 <div id="digg_7">0</div>
+							 <div class="bar"><div class="bg" id="digg_num_7"></div></div>
+							 <div class="mood mood7"><a title="新奇" href="javascript:void(0)" onclick="Send_Digg({sdcms:info_id},6)"></a></div>
+						 </dt>
+						 <dt>
+							 <div id="digg_8">0</div>
+							 <div class="bar"><div class="bg" id="digg_num_8"></div></div>
+							 <div class="mood mood8"><a title="无聊" href="javascript:void(0)" onclick="Send_Digg({sdcms:info_id},7)"></a></div>
+						 </dt>
+					 </dl>
+				</div>
+                </div>
+                
+                
+                <div class="content_url"><span>本文网址：</span><input id="this_url" type="text" value="{sdcms:info_url}" /><input type="button" value="复制" onclick="copyurl('this_url');" /></div>
+				<script>Load_Gigg({sdcms:info_id})</script>
+				<div class="info_next">上一篇：{sdcms:loop top="1" table="View_info" where="id<{sdcms:info_id} and ispass=1"}{eof}没有资料{/eof}<a href="{link}" [if {isurl}=1]target="_blank"[end if]>{title}</a>{/sdcms:loop}</div>
+				<div class="info_next">下一篇：{sdcms:loop top="1"  table="View_info" where="id>{sdcms:info_id} and ispass=1" order="id"}{eof}没有资料{/eof}<a href="{link}" [if {isurl}=1]target="_blank"[end if]>{title}</a>{/sdcms:loop}</div>
+				</div>	
+		  </div>
+		  {iif {sdcms:info_iscomment}=1 And {sdcms:comment_pass}=1 }
+		  <div class="border mt10">
+				<div class="subject_bg">
+					<div class="subject_title"><span><a href="{sdcms:root}plug/comment/?id={sdcms:info_id}" target="_blank">已有<span id="show_i_commentnum"><script>get_comment({sdcms:info_commentnum},"show_i_commentnum")</script></span>条评论信息，点击查看</a></span>网友评论</div>
+				</div>
+				<div class="m10 comment_content">				
+					<form onsubmit="return checkcomment(this);">
+					  <dl class="comment_add">
+						  <dt><textarea name="content" class="inputs"></textarea><input type="hidden" name="followid" value="0" /></dt>
+						  <dt>姓名：<input name="username" class="input" size="6" maxlength="10" value="匿名" onfocus="if(this.value=='匿名')this.value=''" onblur="if(this.value=='')this.value='匿名'" /><input type="hidden" name="id" value="{sdcms:info_id}" />　验证码：<input id="yzm" size="6" name="yzm" type="text"  class="input" maxlength="4" /><img align="absmiddle" src="{sdcms:root}inc/sdcmscode.asp?t0=60&t1=18" width="60" height="18" alt="看不清楚，换一个" id="yzm_num" onClick="this.src+='&'+Math.random();" /></dt>
+						  <dt><input class="vote_bnt" value="发送" type="submit" /><span id="showmsg"></span></dt>
+					  </dl>
+					  </form>
+					 
+				 </div>
+		  </div>
+		  {/iif}
+	  </div>
+		<!--Left Over-->
+		<div id="right">
+		<div class="border" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">栏目分类</div>
+				</div>
+				<div class="m10">
+					<dl class="class_list">
+					{@sdcms:loop top="0" table="sd_class" where="followid={sdcms:info_classid}" order="ordnum,id"}
+					{@eof}{sdcms:loop top="0" table="sd_class" where="followid={sdcms:info_followid}"  order="ordnum,id"}<dt>·<a href="{link}" [if {sdcms:info_classid}={id}]style="font-weight:bold;"[end if] >{title len="36"}</a></dt>{/sdcms:loop}{/@eof}
+						<dt>·<a href="{@link}" >{@title len="36"}</a></dt>
+					{/@sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+			<div class="border mt10" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">热门排行</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+					{sdcms:loop table="View_info" top="10" where="classid={sdcms:info_classid} and ispass=1" order="hits desc,id desc"}
+						{eof}<dt>没有资料</dt>{/eof}
+						<dt><a href="{link}" title="{title}" [if {isurl}=1]target="_blank"[end if] {style}>{title len="36"}</a></dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+			<div class="border mt10" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">推荐信息</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+					{sdcms:loop table="View_info" top="10" where="classid={sdcms:info_classid} and isnice=1 and ispass=1"}
+						{eof}<dt>没有资料</dt>{/eof}
+						<dt><a href="{link}" title="{title}" [if {isurl}=1]target="_blank"[end if] {style}>{title len="36"}</a></dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+			<div class="border mt10" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">相关信息</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+                    {sdcms:loop table="View_info" top="10" where="id in({sdcms:info_likeid}) and id<>{sdcms:info_id} and ispass=1"}
+						{eof}<dt>没有资料</dt>{/eof}
+						<dt><a href="{link}" title="{title}" [if {isurl}=1]target="_blank"[end if] {style}>{title len="36"}</a></dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+	  </div>
+	</div>
+	
+    
+{sdcms:include("sdcms_foot.htm")}

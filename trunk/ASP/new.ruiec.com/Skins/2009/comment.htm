@@ -1,0 +1,51 @@
+{sdcms:include("head.htm")}
+<div id="content" class="content">
+  <div id="con_left">
+	<div id="news_page">
+	  <div class="subject_title" style="border:1px solid #CCC">相关评论 [<a href="{sdcms:info_url}">查看原文</a>]</div>
+	  <div class="m10">
+	  {@sdcms:loop table="sd_comment" showpage="yes" top="10" txtinfo="条评论" where="ispass=1 and infoid={sdcms:info_id}"}
+	  {@eof}<div>没有评论</div>{/@eof}
+	  <div class="comment_title"><span>{@adddate date="yyyy-mm-dd hh.ff.ss"}</span>{@username} </div>
+	  <div class="comment_txt">
+		{sdcms:loop table="sd_comment" where="id in({@allfollowid})"}<div>{/sdcms:loop}
+		{sdcms:loop table="sd_comment" where="id in({@allfollowid})" order="id"}<u>{i}楼　{username} 发表于：{adddate}</u><br>{content}</div>{/sdcms:loop}
+		{@content}</div>
+		<div class="comment_other"><span id="support_{@id}"><a href="javascript:void(0)" onclick="Comment_Support({@id})">支持({@SupportNum})</a></span>　<a href="javascript:void(0)" onclick="set_comment({@id},'{@content function="nohtml" len="20"}')">回复</a></div>
+	  {/@sdcms:loop}
+	  {sdcms:showpages}
+	  </div>
+	</div>
+  </div>
+  <div id="con_right">
+	<div class="con_list_news">
+	<h3>发表评论</h3>
+	<ul>
+	<form onsubmit="return checkcomment(this);">
+	<div id="get_html"></div>
+	<div><textarea name="content" class="re_con_r" id="coment_content"></textarea></div>
+	<div>姓&nbsp;&nbsp;名：<input name="username" size="6" type="text" class="input" maxlength="10" value="匿名" onfocus="if(this.value=='匿名')this.value=''" onblur="if(this.value=='')this.value='匿名'" /></div>
+	<div><input type="hidden" name="id" value="{sdcms:info_id}" />验证码：<input id="yzm" size="6" name="yzm" type="text"  class="input" maxlength="10" /><img align="absmiddle" src="{sdcms:root}inc/sdcmscode.asp?t0=60&t1=18" alt="看不清楚，换一个" onClick="this.src+='&'+Math.random();" id="yzm_num" /></div>
+	<div><input type="hidden" name="followid" id="followid" /><input class="vote_bnt" value="提 交" type="submit" /> <span id="showmsg"></span></div>
+	</form>
+	</ul>
+  </div>
+  <div class="con_list_news">
+	<h3>热门评论</h3>
+	<ul>
+	{sdcms:loop field="id,title,style" table="Sd_info" top="10" where="ispass=1 and IsComment=1" order="Comment_Num Desc,ID Desc"}
+	{eof}<li>没有资料</li>{/eof}
+		<li><a href="?ID={ID}" title="{title}" {style}>{title len="36"}</a></li>
+	{/sdcms:loop}
+	</ul>
+  </div>
+  <div class="contact">
+	<h3>7*24小时服务支持</h3>
+	{sdcms_r_info}
+	</div>
+    {sdcms_ad_rbootom}
+</div>
+<div class="clear"></div>
+<br />
+
+{sdcms:include("foot.htm")}

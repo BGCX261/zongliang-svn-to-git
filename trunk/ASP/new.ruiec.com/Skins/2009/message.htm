@@ -1,0 +1,48 @@
+{sdcms:include("head.htm")}
+<div id="content" class="content">
+  <div id="con_left">
+	<div id="news_page">
+	<h3>来自客户的留言评价：</h3>
+	{@sdcms:loop table="sd_msg" top="5" txtinfo="条留言" showpage="yes" where="ispass='1'" order="addtime DESC,id DESC"}
+	{@eof}<div>Not Found</div>{/@eof}
+	<p class="border_none">
+	<em>“</em>
+	{@content}
+	<em>”</em>
+	</p>
+	<span class="cusExpLine">------{@company} {@username} {@addtime}</span>
+	{/@sdcms:loop}
+	{sdcms:showpages}
+	</div>
+	<div id="div_qmsg" style="display:none">
+		<form id="myFM" method="post" action="{sdcms:weburl}/msg.asp" target="_blank">
+			<br />
+			<p>您的姓名：<input name="username" size="25" /></p>
+			<p>您的电话：<input name="tel" size="25" /></p>
+			<p>公司名称：<input name="company" size="40" /></p>
+			<p>留言内容：<textarea id="content" cols="40" rows="7" name="content"></textarea></p>
+			<p><input class="submit" name="dosubmit" value="提 交" type="submit" /></p>
+		</form>
+	</div>
+  </div>
+  <div id="con_right">
+	<div class="con_list_news">
+	<h3>客户留言</h3>
+	<ul>
+		<li><a href="javascript:;" onclick="$('#div_qmsg').hide();$('#news_page').show();" title="Msg">查看留言</a>
+		<li><a href="javascript:;" onclick="$('#news_page').hide();$('#div_qmsg').show();" title="Msg">我要留言</a>
+		{sdcms:loop top="10" table="View_info" pageid="1" where="ispass=1 and classid={sdcms:class_id}" order="id desc"}
+		<li><a href="{link}" title="{title}">{title}</a></li>
+		{/sdcms:loop}
+	</ul>
+  </div>
+  <div class="contact">
+	<h3>7*24小时服务支持</h3>
+	{sdcms_r_info}
+	</div>
+    {sdcms_ad_rbootom}
+</div>
+<div class="clear"></div>
+<br />
+
+{sdcms:include("foot.htm")}	

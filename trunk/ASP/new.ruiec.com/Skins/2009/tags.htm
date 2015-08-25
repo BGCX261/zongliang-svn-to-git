@@ -1,0 +1,44 @@
+{sdcms:include("head.htm")}
+<div id="content" class="content">
+  <div id="con_left">
+	<div id="news_page">
+      <ul id="news_list">
+	  {@sdcms:loop table="View_info" showpage="yes" top="5" txtinfo="条数据" where="Tags LIKE '%{sdcms:tag}%' and ispass=1" order="Ontop desc,id desc"}
+	  {@eof}<div>没有资料</div>{/@eof}
+		<li>
+		<div class="listNewsTitle">
+			<a href="{@link}" title="{@title}" target="_blank" {@style}>{@title}</a>
+		</div>
+		<div class="listNewsDescription">
+			{@jj function="nohtml" len="200"}
+			<p class="xline yuduqunwen">
+				<span class="date">{@adddate date="yyyy-mm-dd hh.ff.ss"}</span>
+			  <a href="{@link}" title="{@title}" target="_blank" {@style}>阅读全文</a>
+			</p>
+		</div>
+		</li>
+	  {/@sdcms:loop}
+	  </ul>
+	  {sdcms:showpages}
+	</div>
+  </div>
+  <div id="con_right">
+	<div class="con_list_news">
+	<h3>随机标签</h3>
+	<ul>
+	{sdcms:loop table="sd_tags" pageid="1" top="10" order="rnd"}
+	{eof}<li>没有资料</li>{/eof}
+		<li><a href="{link}" title="{title}">{title len="36"}</a></li>
+	{/sdcms:loop}
+	</ul>
+  </div>
+  <div class="contact">
+	<h3>7*24小时服务支持</h3>
+	{sdcms_r_info}
+	</div>
+    {sdcms_ad_rbootom}
+</div>
+<div class="clear"></div>
+<br />
+
+{sdcms:include("foot.htm")}

@@ -1,0 +1,54 @@
+{sdcms:include("head.htm")}
+<div id="content" class="content">
+  <div id="con_left">
+	<div id="news_page">
+	 <ul>
+     {@sdcms:loop table="View_info" showpage="yes" pageid="{sdcms:so_pate}" top="5" txtinfo="条搜索结果" where="Title like '%{sdcms:so_keys}%' and ispass=1" order="Ontop desc,id desc"}
+	  {@eof}<div>抱歉，没有找到与“<span style="color:red">{sdcms:so_key}</span>” 相关的内容</div>{/@eof}
+		<li>
+		<div class="listNewsTitle">
+			<a href="{@link}" title="{@title}" [@if {@isurl}=1]target="_blank"[@end if] {@style}>{@title}</a>
+		</div>
+		<div class="list_other" style="padding-left:15px;">类别：<span><a href="/{@classurl}">{@classname}</a></span> 作者：<span>{@author}</span> 日期：<span>{@adddate date="yyyy-mm-dd hh.ff.ss"}</span> 点击：<span>{@hits}</span> 评论：<span>{@comment_num}</span></div>
+		<div class="listNewsDescription">
+			{@jj function="nohtml" len="200"}
+			<p class="xline yuduqunwen">
+				<!--<span class="date">{@adddate date="yyyy-mm-dd hh.ff.ss"}</span>-->
+			    <a href="{@link}" [@if {@isurl}=1]target="_blank"[@end if] {@style}>阅读全文>></a>
+			</p>
+		</div>
+		</li>
+	  {/@sdcms:loop}
+	  {sdcms:showpages}
+	  </ul>
+	</div>
+  </div>
+  <div id="con_right">
+  <div class="con_list_news">
+	<h3>最新关键字</h3>
+	<ul>
+	{sdcms:loop top="10" pageid="1" table="sd_search"}
+	{eof}<li>没有资料</li>{/eof}
+		<li><a href="?key={title}">{title len="26"}</a></li>
+	{/sdcms:loop}
+	</ul>
+  </div>
+  <div class="con_list_news">
+	<h3>热门关键字</h3>
+	<ul>
+	{sdcms:loop top="10" pageid="1" table="sd_search"}
+	{eof}<li>没有资料</li>{/eof}
+		<li><a href="?key={title}">{title len="26"}</a></li>
+	{/sdcms:loop}
+	</ul>
+  </div>
+  <div class="contact">
+	<h3>7*24小时服务支持</h3>
+	{sdcms_r_info}
+	</div>
+    {sdcms_ad_rbootom}
+</div>
+<div class="clear"></div>
+<br />
+
+{sdcms:include("foot.htm")}	

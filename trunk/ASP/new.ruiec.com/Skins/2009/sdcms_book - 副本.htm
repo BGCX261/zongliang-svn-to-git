@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title>意见反馈 　Powered By SDCMS</title>
+<link href="{sdcms:root}skins/2009/css/sdcms.css" rel="stylesheet" type="text/css" />
+<script>var webdir="{sdcms:root}";</script>
+<script src="{sdcms:root}editor/jquery.js" language="javascript"></script>
+<script type="text/javascript" src="{sdcms:root}editor/kindeditor.js" charset="utf-8" ></script>
+<script src="{sdcms:root}skins/2009/js/sdcms.js" language="javascript"></script>
+<!--[if lt IE 7]>
+<script type="text/javascript" src="{sdcms:root}skins/2009/js/minmax.js"></script>
+<![endif]-->
+</head>
+
+<body>
+{sdcms:include("Sdcms_Head.htm")}
+	<div class="width mt10">
+		<div id="left">
+			
+			<div class="border">
+				<div class="subject_bg">
+					<div class="subject_title">意见反馈</div>
+				</div>
+				<div class="m10">
+					{@sdcms:page field="adddate,username,content,recontent" table="sd_book" where="ispass=1" pagesize="5"}
+					{@eof}<div>没有留言</div>{/@eof}			
+					<div class="book_title"><b>{@adddate date="yyyy-mm-dd hh.ff.ss"}</b>{@username} </div>
+					<div class="book_content">{@content}[@if {@recontent function="len"}>0]<div class="mt10"><b>回复</b>：{@recontent}</div>[@end if]</div>
+					{/@sdcms:page}
+					<div class="List_page">{sdcms:listpage}</div>
+				</div>	
+		  </div>
+		  
+	  </div>
+		<!--Left Over-->
+		<div id="right">
+			<div class="border" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">发表留言</div>
+				</div>
+				<div class="m10">
+					<dl class="plug_book_add">
+					<form onsubmit="return checkbook(this);">
+					<dt><textarea name="content" class="inputs"></textarea></dt>
+					<dt>姓名：<input name="username" size="6" type="text" class="input" maxlength="10" value="匿名" onfocus="if(this.value=='匿名')this.value=''" onblur="if(this.value=='')this.value='匿名'" />　验证码：<input id="yzm" size="6" name="yzm" type="text"  class="input" maxlength="10" /><img align="absmiddle" src="{sdcms:root}inc/sdcmscode.asp?t0=60&t1=18" alt="看不清楚，换一个" onClick="this.src+='&'+Math.random();" id="yzm_num" /></dt>
+					<dt><input class="vote_bnt" value="提 交" type="submit" /> <span id="showmsg"></span></dt>
+					</form>
+					</dl>
+				</div>
+			</div>
+			
+			<div class="border mt10" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">待审留言</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+					{sdcms:loop field="content" table="sd_book" top="10" where="ispass=0"}
+						{eof}<dt>没有资料</dt>{/eof}
+						<dt>{content Function="nohtml" len="36"}</dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+	  </div>
+	</div>
+	
+{sdcms:include("sdcms_foot.htm")}

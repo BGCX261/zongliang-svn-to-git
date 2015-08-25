@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title>{sdcms:class_title} 　Powered By SDCMS</title>
+<meta name="keywords" content="{sdcms:class_key}" />
+<meta name="description" content="{sdcms:class_desc}" />
+<link href="{sdcms:root}skins/2009/css/sdcms.css" rel="stylesheet" type="text/css" />
+<script>var webdir="{sdcms:root}";</script>
+<script src="{sdcms:root}editor/jquery.js" language="javascript"></script>
+<script src="{sdcms:root}skins/2009/js/sdcms.js" language="javascript"></script>
+</head>
+
+<body>
+{sdcms:include("Sdcms_Head.htm")}
+	<div class="width" id="Positon">
+		您的位置：<a href="{sdcms:root}">网站首页</a> {sdcms:class_position}
+	</div>
+	<div class="width">
+		<div id="left">
+			<div class="left_w">
+				<div id="index_ad">
+				<script type="text/javascript">
+				var swf_width=330;
+				var swf_height=250;
+				/*参数 自动播放时间(秒)|文字颜色|文字背景色|文字背景透明度|按键数字颜色|当前按键颜色|普通按键色彩 --*/
+				var config='5|0xffffff|0x50B20E|100|0xffffff|0x50B20E|0x50B20E';
+				var files='',links='', texts='';
+				{sdcms:loop field="id,title,pic,isurl" top="5" table="View_info" where="ispic=1 and ispass=1 and classid in({sdcms:class_allclassid})"}
+				{eof}files+='|../skins/2009/images/nophoto.gif';
+				links+='|';
+				texts+='|';{/eof}
+				files+='|{pic}';
+				links+='|{link}';
+				texts+='|{title}';
+				{/sdcms:loop}
+				files=files.substring(1);
+				links=links.substring(1);
+				texts=texts.substring(1);
+				document.write('<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" width="'+ swf_width +'" height="'+ swf_height +'">');
+				document.write('<param name="movie" value="{sdcms:root}skins/2009/images/focus.swf" />');
+				document.write('<param name="quality" value="high" />');
+				document.write('<param name="menu" value="false" />');
+				document.write('<param name=wmode value="opaque" />');
+				document.write('<param name="FlashVars" value="config='+config+'&bcastr_flie='+files+'&bcastr_link='+links+'&bcastr_title='+texts+'" />');
+				document.write('<embed src="{sdcms:root}skins/2009/images/focus.swf" wmode="opaque" FlashVars="config='+config+'&bcastr_flie='+files+'&bcastr_link='+links+'&bcastr_title='+texts+'& menu="false" quality="high" width="'+ swf_width +'" height="'+ swf_height +'" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />');
+				document.write('</object>');
+				</script>
+				</div>
+				<div id="ontop">
+					<div class="subject_bg"><div class="subject_title">最新信息</div></div>
+					<div class="ontop">
+						<div class="ontop_div">
+						{sdcms:loop field="id,title,classid,isurl,ClassUrl,htmlname,jj" table="View_info" top="1" where="ontop=1 and ispass=1 and classid in({sdcms:class_allclassid})"}
+						<h1><a href="{link}" [if {isurl}=1]target="_blank"[end if]>{title len="28"}</a></h1>　　{jj function="nohtml" len="80"}
+						{/sdcms:loop}
+							<dl class="index_news">
+							{sdcms:loop table="view_info" top="5" where="ispass=1 and classid in({sdcms:class_allclassid})"}
+							{eof}<dt>没有资料</dt>{/eof}
+								<dt><span [if {adddate date="yyyymmdd"}={date()}]class="red"[end if]>{adddate date="mm.dd"}</span>[<a href="{classurl}">{classname}</a>] <a href="{link}" title="{title}" [if {isurl}=1]target="_blank"[end if] {style}>{title len="26"}</a></dt>
+								{/sdcms:loop}
+							</dl>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+		
+			<!--loop begin-->
+			{@sdcms:loop field="id,title,ClassUrl,allclassid" table="sd_class" top="0" where="followid={sdcms:class_id}" order="ordnum,ID"}
+			<div class="border index_left[@if {@i} mod 2<>0] mr10[@end if]">
+				<div class="subject_bg">
+					<div class="subject_title"><span><a href="{@link}">更多>></a></span>{@title}</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+						{sdcms:loop field="id,title,adddate,classid,isurl,ClassUrl,htmlname,style" table="View_info" top="10" where="classid in({@allclassid}) and ispass=1"}
+						{eof}<dt>没有资料</dt>{/eof}
+							<dt><span>{adddate date="mm.dd"}</span><a href="{link}" title="{title}" [if {isurl}=1]target="_blank"[end if] {style}>{title len="36"}</a></dt>
+						{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			{/@sdcms:loop}
+			<!--loop End-->
+		  
+	  </div>
+		<!--Left Over-->
+		<div id="right">
+			<div class="border" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">栏目分类</div>
+				</div>
+				<div class="m10">
+					<dl class="class_list">
+					{@sdcms:loop top="0" table="sd_class" where="followid={sdcms:class_id}" order="ordnum,ID"}
+					{@eof}{sdcms:loop top="0" table="sd_class" where="followid={sdcms:class_followid}"  order="ordnum,ID"}<dt>·<a href="{link}" [if {sdcms:class_id}={id}]style="font-weight:bold;"[end if] >{title len="36"}</a></dt>{/sdcms:loop}{/@eof}
+						<dt>·<a href="{@link}" >{@title len="36"}</a></dt>
+					{/@sdcms:loop}
+					</dl>
+				</div>
+			</div>
+		
+			<div class="border mt10" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">热门排行</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+					{sdcms:loop table="View_info" top="10" where="classid in({sdcms:class_allclassid}) and ispass=1" order="hits desc,id desc"}
+					{eof}<dt>没有资料</dt>{/eof}
+						<dt><a href="{link}" title="{title}" [if {isurl}=1]target="_blank"[end if] {style}>{title len="36"}</a></dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+			<div class="border mt10" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">推荐信息</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+					{sdcms:loop table="View_info" top="10" where="classid in({sdcms:class_allclassid}) and isnice=1 and ispass=1"}
+					{eof}<dt>没有资料</dt>{/eof}
+						<dt><a href="{link}" title="{title}" [if {isurl}=1]target="_blank"[end if] {style}>{title len="36"}</a></dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+	  </div>
+	</div>
+	
+{sdcms:include("sdcms_foot.htm")}

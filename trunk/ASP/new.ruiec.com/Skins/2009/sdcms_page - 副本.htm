@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title>{sdcms:other_title} 　Powered By SDCMS</title>
+<meta name="keywords" content="{sdcms:other_key}" />
+<meta name="description" content="{sdcms:other_desc}" />
+<link href="{sdcms:root}skins/2009/css/sdcms.css" rel="stylesheet" type="text/css" />
+<script>var webdir="{sdcms:root}";</script>
+<script src="{sdcms:root}editor/jquery.js" language="javascript"></script>
+<script src="{sdcms:root}skins/2009/js/sdcms.js" language="javascript"></script>
+<!--[if lt IE 7]>
+<script type="text/javascript" src="{sdcms:root}skins/2009/js/minmax.js"></script>
+<![endif]-->
+</head>
+
+<body>
+{sdcms:include("Sdcms_Head.htm")}
+	
+	<div class="width mt10">
+		<div id="left">
+			
+			<div class="border">
+				<div class="subject_bg">
+					<div class="subject_title">{sdcms:other_title}</div>
+				</div>
+				<div class="m10">
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+				<td class="other_content">{sdcms:other_content}</td>
+				</tr>
+				</table>
+				<div style="width:630px;text-align:center;"><div class="content_page">{sdcms:other_page}</div></div>
+				</div>	
+		  </div>
+		  
+	  </div>
+		<!--Left Over-->
+		<div id="right">
+			<div class="border" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">栏目分类</div>
+				</div>
+				<div class="m10">
+				<dl class="class_list">
+					{@sdcms:loop top="0" table="sd_other" where="followid={sdcms:other_id}" order="ordnum desc"}
+					{@eof}{sdcms:loop top="0" table="sd_other" where="followid={sdcms:other_followid}"  order="ordnum desc"}<dt>·<a href="{link}" [if {sdcms:other_id}={id}]style="font-weight:bold;"[end if]>{title len="26"}</a></dt>{/sdcms:loop}{/@eof}
+						<dt>·<a href="{@link}" >{@title len="26"}</a></dt>
+					{/@sdcms:loop}
+					</dl>
+				</div>
+			
+			</div>
+ 
+	  </div>
+	</div>
+	
+	 
+	
+{sdcms:include("sdcms_foot.htm")}

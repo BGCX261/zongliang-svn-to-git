@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title>查看投票 　Powered By SDCMS</title>
+<link href="{sdcms:root}skins/2009/css/sdcms.css" rel="stylesheet" type="text/css" />
+<script>var webdir="{sdcms:root}";</script>
+<script src="{sdcms:root}editor/jquery.js" language="javascript"></script>
+<script src="{sdcms:root}skins/2009/js/sdcms.js" language="javascript"></script>
+<!--[if lt IE 7]>
+<script type="text/javascript" src="{sdcms:root}skins/2009/js/minmax.js"></script>
+<![endif]-->
+</head>
+
+<body>
+{sdcms:include("Sdcms_Head.htm")}
+	<div class="width mt10">
+		<div id="left">
+			
+			<div class="border">
+				<div class="subject_bg">
+					<div class="subject_title">查看投票</div>
+				</div>
+				<div class="m10">
+						<dl class="vote_show">
+					{sdcms:loop table="sd_vote" top="1" where="id={sdcms:vote_id}"}
+					<form onsubmit="return checkvote(this,1);">
+						<dt><h3>{title}</h3></dt>
+						<input type="hidden" id="vote_id" name="vote_id" value="{id}" />
+						[for k=0 to {vote function="ubound"}]
+						<dt><span><img src="{sdcms:root}skins/2009/images/vote_l.gif"  height="16" align="absmiddle" /><img src="{sdcms:root}skins/2009/images/vote_b.gif" width="[percent]" height="16" align="absmiddle" /><img src="{sdcms:root}skins/2009/images/vote_r.gif"  height="16" align="absmiddle" />　[percent]</span><input name="vote" type="[if {stype}=1]radio[else]checkbox[end if]" value="[k]" />[votename]　(票数：[votenum])</dt>
+						[vote={vote}][result={result}][next]
+						<dt class="r">总票数：{result function="total"}</dt>
+						<dt><input name="" type="submit" value="投 票" class="vote_bnt" /></dt>
+					</form><div id="showvote"></div>
+					{/sdcms:loop}
+					</dl>
+				</div>	
+		  </div>
+		  
+	  </div>
+		<!--Left Over-->
+		<div id="right">
+			<div class="border" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">其他投票</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+					{sdcms:loop table="sd_vote" top="10"}
+						<dt><a href="?id={id}">{title len="26"}</a></dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+			
+	  </div>
+	</div>
+	
+{sdcms:include("sdcms_foot.htm")}

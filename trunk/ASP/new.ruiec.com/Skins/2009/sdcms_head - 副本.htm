@@ -1,0 +1,22 @@
+<div class="width">
+	<div id="top_logo"><img src="{sdcms:root}skins/2009/images/logo.gif" /></div>
+	<div id="top_ad"><a href="http://host.sdcms.cn/" target="_blank"><img src="{sdcms:root}skins/2009/images/gg.jpg" alt="SDCMS数据中心" border="0" /></a></div>
+	<div id="top_other"><a href="{sdcms:root}plug/rss/" target="_blank">RSS订阅</a>　|　<a href="{sdcms:root}plug/publish/">匿名投稿</a>
+	<dl>
+		<form onSubmit="return checksearch(this);">
+		<dt><input name="key" type="text" class="input" value="请输入关键字" onFocus="if (value =='请输入关键字'){value =''}" onBlur="if (value ==''){value='请输入关键字'}" /></dt><dt><input type="submit" class="bnt" value="搜 索" /></dt>
+		</form>
+	</dl>
+	</div>
+</div>
+<div id="menu" class="c">
+	<ul class="menu">
+		<dt class="l"></dt>
+		<dt><a href="{sdcms:root}" onfocus="this.blur()">网站首页</a></dt>
+		{sdcms:loop top="10" field="id,title,ClassUrl" table="sd_class" where="followid=0" order="ordnum,id"}
+		<dt class="m"></dt>
+		<dt><a href="{link}" onfocus="this.blur()">{title}</a></dt>
+		{/sdcms:loop}
+		<dt class="r"></dt>
+	</ul>
+</div>

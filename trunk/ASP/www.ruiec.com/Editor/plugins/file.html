@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Accessory</title>
+  <style type="text/css" rel="stylesheet">
+    body {
+    font-size:12px;
+    margin: 0px;
+    background-color:#F0F0EE;
+    overflow: hidden;
+    }
+    td.left1 {
+    font-size:12px;
+    width: 80px;
+    padding: 2px;
+    }
+    td.right1 {
+    font-size:12px;
+    padding: 2px;
+    }
+  </style>
+<script type="text/javascript">
+	var KE = parent.KindEditor;
+	location.href.match(/\?id=([\w-]+)/i);
+	var id = RegExp.$1;
+	var fileUploadJson = (typeof KE.g[id].fileUploadJson == 'undefined') ? '../../php/upload_json.php' : KE.g[id].fileUploadJson;
+	KE.event.ready(function() {
+		KE.$('uploadForm', document).action = fileUploadJson;
+	}, window, document);
+</script>
+</head>
+<body>
+    <iframe name="uploadIframe" id="uploadIframe" style="display:none;"></iframe>
+  <form id="uploadForm" name="uploadForm" method="post" enctype="multipart/form-data" target="uploadIframe" >
+    <input type="hidden" id="editorId" name="id" value="" />
+    <table border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td class="left1">文件地址：</td>
+        <td class="right1">
+          <input type="file" id="imgFile" name="imgFile" style="width:200px;" />
+        </td>
+      </tr>
+      <tr>
+        <td class="left1">文件说明：</td>
+        <td class="right1">
+          <input type="text" id="imgTitle" name="imgTitle" value="" maxlength="100" style="width:200px;" />
+        </td>
+      </tr>
+    </table>
+  </form>
+</body>
+</html>
+
+

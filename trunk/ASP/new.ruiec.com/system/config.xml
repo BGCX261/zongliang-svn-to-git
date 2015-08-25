@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<data>
+	<settings>
+		<auto_play>
+			<defaults symbol="circular" time="2"/>
+			<tweenIn x="500" y="50" width="35" height="35" tint="0xFFFFFF"/>
+		</auto_play>
+    	<prev_button>
+			<defaults round_corners="5,5,5,5"/>
+			<tweenOver tint="0xFFFFFF" scaleX="1.1" scaleY="1.1"/>
+			<tweenOut tint="0x000000"/>
+		</prev_button>
+    	<prev_symbol>
+			<tweenOver tint="0x000000"/>			
+		</prev_symbol>
+    	<next_button>
+			<defaults round_corners="5,5,5,5"/>			
+			<tweenOver tint="0xFFFFFF" scaleX="1.1" scaleY="1.1"/>
+			<tweenOut tint="0x000000"/>
+		</next_button>
+    	<next_symbol>
+			<tweenOver tint="0x000000"/>
+		</next_symbol>			
+	</settings> 
+	<slides>
+		<slide>
+			<url>/skins/2009/swf/slide_1.jpg</url>
+			<link target="_blank">http://www.ruiec.com</link>	
+		</slide>
+		<transition direction="left"/>				
+		<slide>
+			<url>/skins/2009/swf/slide_2.jpg</url>
+			<link target="_blank">http://www.ruiec.com</link>	
+		</slide>
+		<transition duration="0.6" delay=".2" direction="down"/>		
+		<slide>
+			<url>/skins/2009/swf/slide_3.jpg</url>
+			<link target="_blank">http://www.ruiec.com</link>	
+		</slide>	
+		<transition num="3" slicing="horizontal" direction="left" delay="0.05"/>			
+		<slide>
+			<url>/skins/2009/swf/slide_4.jpg</url>
+			<link target="_blank">http://www.ruiec.com</link>	
+		</slide>
+		<transition num="3"/>		
+		<slide>
+			<url>/skins/2009/swf/slide_5.jpg</url>
+			<link target="_blank">http://www.ruiec.com</link>	
+		</slide>	
+		<transition  num="6" slicing="horizontal"  direction="right" duration="0.8"  delay="0.05" z_multiplier="5"/>	
+		<slide>
+			<url>/skins/2009/swf/slide_6.jpg</url>
+			<link target="_blank">http://www.ruiec.com</link>	
+		</slide>				
+		<transition num="6" slicing="vertical" direction="down" shader="phong" delay="0.05"/>			
+		<slide>
+			<url>/skins/2009/swf/slide_7.jpg</url>
+			<link target="_blank">http://www.ruiec.com</link>	
+		</slide>				
+		<transition num="4" direction="down" slicing="horizontal" z_multiplier="6" delay="0.1"/>	
+		<slide>
+			<url>/skins/2009/swf/slide_8.jpg</url>
+			<link target="_blank">http://www.ruiec.com</link>	
+		</slide>
+	</slides>
+</data>
+

@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title>匿名投稿 　Powered By SDCMS</title>
+<link href="{sdcms:root}skins/2009/css/sdcms.css" rel="stylesheet" type="text/css" />
+<script>var webdir="{sdcms:root}";</script>
+<script src="{sdcms:root}editor/jquery.js" language="javascript"></script>
+<script type="text/javascript" src="{sdcms:root}editor/kindeditor.js" charset="utf-8" ></script>
+<script src="{sdcms:root}skins/2009/js/sdcms.js" language="javascript"></script>
+<script type="text/javascript">
+		KE.show({
+			id : 't6',resizeMode : 1,
+			allowUpload:false,
+			items : ['fontname', 'fontsize', '|', 'textcolor', 'bgcolor', 'bold', 'italic', 'underline',
+					 '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+					 'insertunorderedlist', '|',  'image', 'link', 'unlink', 'about'
+					 ]
+		});
+		
+	</script>
+</head>
+
+<body>
+{sdcms:include("Sdcms_Head.htm")}
+	
+	<div class="width mt10">
+		<div id="left">
+			
+			<div class="border">
+				<div class="subject_bg">
+					<div class="subject_title">匿名投稿</div>
+				</div>
+				<div class="m10">
+					<dl class="plug_publish_add">
+					<form onsubmit="return checkPublish(this);">
+					<dt>文章标题：<input size="50" id="t0" name="t0" type="text" class="input" maxlength="50" />　<span>2-50个字符</span></dt>
+					<dt>文章作者：<input size="20" id="t1" name="t1" type="text" class="input" maxlength="10" value="匿名" onFocus="if (value =='匿名'){value =''}" onBlur="if (value ==''){value='匿名'}"  />　<span>2-10个字符</span>　
+					文章来源：<input size="20" id="t2" name="t2" type="text" class="input" maxlength="10" value="原创" /> <a class="hand" onclick="$('#t2')[0].value='转载';">转载</a>　<a class="hand" onclick="$('#t2')[0].value='原创';">原创</a></dt>
+					<dt>所属栏目：<select name="t3" id="t3"><option value="0">请选择栏目</option>{sdcms:sort}</select> </dt>
+					<dt>文章标签：<input size="50" id="t4" name="t4" type="text" class="input" maxlength="50" />　<span>支持空格或逗号区分，50个字符以内</span></dt>
+					<dt>文章简介： <span>留空则自动截取内容部分</span><br><textarea name="t5" class="inputs"></textarea></dt>
+					<dt>文章内容： <span>最少50个汉字</span><br><textarea id="t6" name="t6" style="width:100%;height:300px;"></textarea></dt>
+					<dt>验证码：<input id="yzm" size="6" name="yzm" type="text"  class="input" maxlength="10" /><img align="absmiddle" src="{sdcms:root}inc/sdcmscode.asp?t0=60&t1=18" onClick="this.src+='&'+Math.random();" id="yzm_num" alt="看不清楚，换一个" /></dt>
+					<dt><input class="vote_bnt" value="投稿" type="submit" /><span id="showmsg"></span></dt>
+					</form>
+					</dl>
+				</div>	
+		  </div>
+		  
+	  </div>
+		<!--Left Over-->
+		<div id="right">
+			<div class="border" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">投稿须知</div>
+				</div>
+				<div class="m10">
+					<dl class="publish_notice">
+						<dt>请自觉遵守互联网相关政策法规，请不要发广告。</dt>
+						<dt>用户投稿信息仅代表其个人意见，并且承担一切因投稿内容引起的纠纷和责任。</dt>
+						<dt>本站管理人员有权在不通知用户的情况下删除不符合规定的投稿信息或留做证据。</dt>
+					</dl>
+				</div>
+			</div>
+			
+			<div class="border mt10" id="index_hot">
+				<div class="subject_bg">
+					<div class="subject_title">待审信息</div>
+				</div>
+				<div class="m10">
+					<dl class="all_list">
+					{sdcms:loop table="View_info" top="10" where="userid=-1"}
+						{eof}<dt>没有资料</dt>{/eof}
+						<dt>{title len="36"}</dt>
+					{/sdcms:loop}
+					</dl>
+				</div>
+			</div>
+			
+	  </div>
+	</div>
+	
+{sdcms:include("sdcms_foot.htm")}

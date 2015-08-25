@@ -1,0 +1,31 @@
+﻿<%
+Const pageW= "300"
+Const pageH= "400"
+Const flipSound= 1
+Const reverseOrder= 0
+Const bgClr= "ffffff"
+Const hStartClr= "333333"
+Const hStartAlp= "100"
+Const hEndClr= "111111"
+Const hEndAlp= "100"
+Const overLayClr= "000000"
+Const overLayTrans= "60"
+Const bgImage= 1
+Const bgUrl= "images/wallpaper03.jpg"
+Const autoPlayer= 0
+Const autoDur= "4"
+Const logoSetup= 1
+Const logoUrl= "images/logo.png"
+Const logoShade= 0
+Const logoBevel= 0
+Const logoGlow= 0
+Const helpSetup= 1
+Const pdfSetup= 1
+Const zoomSetup= 1
+Const ExtendedZoom= 1
+Const printSetup= 1
+Const ListPages= 1
+Const Mp3Setup= 1
+Const AutoStart= 1
+Const RandomStart= 1
+%>
